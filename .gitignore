@@ -1,4 +1,5 @@
 # Distribution Files
+/Distribution/*
 /Distribution/Logger
 /Distribution/Logger.*
 /Distribution/ModernUO
@@ -18,6 +19,7 @@
 /Distribution/Archives
 /Distribution/Backups
 /Distribution/Saves
+/Distribution/Data
 /Distribution/docs
 /Distribution/temp
 /Distribution/*.dylib
