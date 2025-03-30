@@ -27,7 +27,7 @@ namespace Server.Items
             Weight = 0.0;
             MaxItems = maxitems;
             Name = "Backpack Of Reduction";
-            Hue = 1337;
+            Hue = 1929;
         }
 
         public BackpackOfReduction(Serial serial) : base(serial)

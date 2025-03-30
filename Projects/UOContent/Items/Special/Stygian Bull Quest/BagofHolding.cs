@@ -27,7 +27,7 @@ namespace Server.Items
             Weight = 0.0;
             MaxItems = maxitems;
             Name = "Bag of Holding";
-            Hue = 1337;
+            Hue = 1929;
         }
 
         public BagOfHolding(Serial serial) : base(serial)
