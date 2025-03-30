@@ -114,7 +114,8 @@ namespace Server.Mobiles
         Regular,
         Spined,
         Horned,
-        Barbed
+        Barbed,
+        Stygian
     }
 
     public class DamageStore : IComparable<DamageStore>
@@ -1743,6 +1744,7 @@ namespace Server.Mobiles
                             HideType.Spined  => new SpinedLeather(hides),
                             HideType.Horned  => new HornedLeather(hides),
                             HideType.Barbed  => new BarbedLeather(hides),
+                            HideType.Stygian => new StygianBullHides(hides),
                             _                => null
                         };
 
@@ -1779,8 +1781,12 @@ namespace Server.Mobiles
                         {
                             corpse.DropItem(new BarbedHides(hides));
                         }
+                        else if(HideType == HideType.Stygian)
+                        {
+                            corpse.DropItem(new StygianBullHides(hides));
+                        }
 
-                        from.SendLocalizedMessage(500471); // You skin it, and the hides are now in the corpse.
+                            from.SendLocalizedMessage(500471); // You skin it, and the hides are now in the corpse.
                     }
                 }
 
