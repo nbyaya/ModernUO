@@ -19,7 +19,7 @@ namespace Server.Mobiles
             Name = "a stygian bull";
             Body = Utility.RandomList( 0xE8, 0xE9 );
             BaseSoundID = 0x64;
-            Hue = 1929;
+            Hue = 1337;
 
             SetStr( 205, 245 );
             SetDex( 215, 238 );
