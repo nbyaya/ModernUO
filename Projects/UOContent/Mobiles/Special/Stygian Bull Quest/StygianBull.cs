@@ -5,6 +5,7 @@
  * Date: March 26, 2025                 *
  ****************************************/
 
+using Server.Engines.Quests.Naturalist;
 using Server.Items;
 
 namespace Server.Mobiles
@@ -50,13 +51,9 @@ namespace Server.Mobiles
             VirtualArmor = 50;
         }
 
-        public override int Meat{ get{ return 10; } }
-        public override void GenerateLoot()
-        {
-            if ( Utility.Random(5) ==0 )
-                PackItem( new StygianBullHides() );
-
-        }
+        public override int Meat => 10;
+        public override int Hides => 3;
+        public override HideType HideType => HideType.Stygian;
 
         public override bool AlwaysMurderer{ get{ return true; } }
 
