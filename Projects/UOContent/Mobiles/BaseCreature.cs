@@ -1734,7 +1734,6 @@ namespace Server.Mobiles
 
                 if (hides != 0)
                 {
-                    var holding = from.Weapon as Item;
 
                     if (Core.AOS && with is SkinningKnife)
                     {
