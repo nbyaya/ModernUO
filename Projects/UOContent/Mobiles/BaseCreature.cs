@@ -1736,7 +1736,7 @@ namespace Server.Mobiles
                 {
                     var holding = from.Weapon as Item;
 
-                    if (Core.AOS && holding is SkinningKnife)
+                    if (Core.AOS && with is SkinningKnife)
                     {
                         var leather = HideType switch
                         {
