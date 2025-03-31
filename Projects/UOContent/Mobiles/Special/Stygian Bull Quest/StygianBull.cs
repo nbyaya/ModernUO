@@ -51,12 +51,10 @@ namespace Server.Mobiles
         }
 
         public override int Meat{ get{ return 10; } }
-        public override void GenerateLoot()
-        {
-            if ( Utility.Random(5) ==0 )
-                PackItem( new StygianBullHides() );
+       
+        public override int Hides{ get{ return 3; } }
 
-        }
+        public override HideType HideType => HideType.Stygian;
 
         public override bool AlwaysMurderer{ get{ return true; } }
 
