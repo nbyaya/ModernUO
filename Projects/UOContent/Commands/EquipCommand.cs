@@ -128,7 +128,7 @@ public static class EquipCommand
         {
             if (!pm.Backpack.Items.Contains(pair.OneHanded))
             {
-                pm.SendMessage($"{pair.OneHanded.Name} not found in backpack.");
+                pm.SendMessage($"One handed item not found in backpack.");
             }
             else
             {
@@ -140,7 +140,7 @@ public static class EquipCommand
         {
             if (!pm.Backpack.Items.Contains(pair.TwoHanded))
             {
-                pm.SendMessage($"{pair.TwoHanded.Name} not found in backpack.");
+                pm.SendMessage($"Two handed item not found in backpack.");
             }
             else
             {
