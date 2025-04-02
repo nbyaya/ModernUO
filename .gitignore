@@ -18,6 +18,7 @@
 /Distribution/Archives
 /Distribution/Backups
 /Distrubtion/Data
+/Distribution/Data/Binary
 /Distribution/Saves
 /Distribution/docs
 /Distribution/temp
@@ -45,4 +46,3 @@
 
 /packages/*
 /Distribution/Configuration/server-access.json
-/Distribution/Data/Binary/Bounds.bin
