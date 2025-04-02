@@ -152,6 +152,8 @@ public static class EquipCommand
             pm.PlaySound(0x48);
     }
 
+    [Usage("SetEquip (set#)")]
+    [Description("Used to save the current item(s) in hands to a set.")]
     private static void SetEquip_OnCommand(CommandEventArgs e)
     {
         var pm = e.Mobile as PlayerMobile;
@@ -177,6 +179,8 @@ public static class EquipCommand
         pm.SendMessage($"Weapon set {setId} saved.");
     }
 
+    [Usage("UnEquip")]
+    [Description("Used to unequip all items in hands.")]
     private static void UnEquip_OnCommand(CommandEventArgs e)
     {
         var pm = e.Mobile as PlayerMobile;
