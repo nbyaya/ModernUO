@@ -115,7 +115,10 @@ namespace Server.SkillHandlers
                                     {
                                         continue;
                                     }
-
+                                    if (HasPeaceProtection(m, from))
+                                    {
+                                        continue;
+                                    }
                                     calmed = true;
 
                                     // You hear lovely music, and forget to continue battling!
@@ -222,6 +225,11 @@ namespace Server.SkillHandlers
                     }
                 }
             }
+
+        }
+        public static bool HasPeaceProtection(Mobile target, Mobile source)
+        {
+            return false;
         }
     }
 }

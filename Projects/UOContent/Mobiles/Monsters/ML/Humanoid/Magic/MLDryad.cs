@@ -87,7 +87,7 @@ namespace Server.Mobiles
 
             foreach (var m in GetMobilesInRange(RangePerception))
             {
-                if (m is PlayerMobile pm && IsValidTarget(pm))
+                if (m is PlayerMobile pm && IsValidTarget(pm) && !SkillHandlers.Peacemaking.HasPeaceProtection(pm, this))
                 {
                     pm.PeacedUntil = Core.Now + duration;
                     m.SendLocalizedMessage(1072065); // You gaze upon the dryad's beauty, and forget to continue battling!
