@@ -108,8 +108,8 @@ namespace Server.Spells
         {
             /* T2A(Fel), Khaldun, Ilshenar, Wind(Tram),
              * Wind(Fel), Dungeons(Fel), Solen(Tram), Solen(Fel),
-             * CrystalCave(Malas), XXGauntlet(Malas), XXGauntlet(Ferry), XXSafeZone,
-             * XXStronghold, ChampionSpawn, Dungeons(Tokuno[Malas]), XXLampRoom(Doom),
+             * CrystalCave(Malas), XXGauntlet(Malas), XXGauntlet(Ferry), ??SafeZone,
+             * ??Stronghold, ChampionSpawn, Dungeons(Tokuno[Malas]), XXLampRoom(Doom),
              * XXGuardianRoom(Doom), XXHeartwood, MLDungeons */
 
             /* Recall From */
@@ -122,35 +122,35 @@ namespace Server.Spells
             },
             /* Recall To */
             {
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false
+                true, true, true, true,
+                true, true, true, true,
+                true, false, false, false,
+                false, true, true, false,
+                false, false, true
             },
             /* Gate From */
             {
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false
+                true, true, true, true,
+                true, true, true, true,
+                true, false, false, false,
+                false, true, true, false,
+                false, false, true
             },
             /* Gate To */
             {
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false
+                true, true, true, true,
+                true, true, true, true,
+                true, false, false, false,
+                false, true, true, false,
+                false, false, true
             },
             /* Mark In */
             {
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false
+                true, true, true, true,
+                true, true, true, true,
+                true, false, false, false,
+                false, true, true, false,
+                false, false, true
             },
             /* Tele From */
             {
@@ -166,7 +166,7 @@ namespace Server.Spells
                 true, true, true, true,
                 false, true, false, false,
                 false, true, true, true,
-                true, false, false
+                true, false, true
             }
         };
 
