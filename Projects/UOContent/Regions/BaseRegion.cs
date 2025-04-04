@@ -11,6 +11,7 @@ public class BaseRegion : Region
 {
     private static readonly List<Rectangle3D> m_RectBuffer1 = new();
     private static readonly List<Rectangle3D> m_RectBuffer2 = new();
+    private static readonly TimeSpan RuccisDefaultLogoutDelay = TimeSpan.FromMinutes(1.0);
 
     public BaseRegion(string name, Map map, int priority, params ReadOnlySpan<Rectangle2D> area) : base(name, map, priority, area)
     {
@@ -71,8 +72,17 @@ public class BaseRegion : Region
     public override TimeSpan GetLogoutDelay(Mobile m) =>
         NoLogoutDelay && m.Aggressors.Count == 0 && m.Aggressed.Count == 0 && !m.Criminal
             ? TimeSpan.Zero
-            : base.GetLogoutDelay(m);
+            : GetLogoutDelayEx(m);
 
+    public TimeSpan GetLogoutDelayEx(Mobile m)
+    {
+        if (Parent != null)
+        {
+            return Parent.GetLogoutDelay(m);
+        }
+
+        return m.AccessLevel > AccessLevel.Player ? StaffLogoutDelay : RuccisDefaultLogoutDelay;
+    }
     public override void OnEnter(Mobile m)
     {
         if (m is PlayerMobile mobile && mobile.Young && !YoungProtected)
