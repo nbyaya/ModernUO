@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using Server.Accounting;
+using Server.Mobiles;
 
 namespace Server.Commands
 {
@@ -56,7 +57,11 @@ namespace Server.Commands
             {
                 return;
             }
-
+            var fromPlayer = from as PlayerMobile;
+            if (fromPlayer == null || fromPlayer.AccessLevel == AccessLevel.Player)
+            {
+                return;
+            }
             try
             {
                 Output.WriteLine("{0}: {1}: {2}", Core.Now, from.NetState, text);
