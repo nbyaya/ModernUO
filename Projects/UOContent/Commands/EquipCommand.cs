@@ -98,7 +98,7 @@ public static class EquipCommand
     }
 
     [Usage("Equip (set#)")]
-    [Description("Used to equip specified item(s) in hands.")]
+    [Description("Used to equip specified items from set#. Use [setequip to define sets.")]
     private static void Equip_OnCommand(CommandEventArgs e)
     {
         var pm = e.Mobile as PlayerMobile;
@@ -236,7 +236,7 @@ public static class EquipCommand
     }
 
     [Usage("SetEquip (set#)")]
-    [Description("Used to save the current item(s) in hands to a set.")]
+    [Description("Used to save the current item(s) in hands to a set, to be equipped with [equip")]
     private static void SetEquip_OnCommand(CommandEventArgs e)
     {
         var pm = e.Mobile as PlayerMobile;
@@ -263,7 +263,7 @@ public static class EquipCommand
     }
 
     [Usage("UnEquip")]
-    [Description("Used to unequip all items in hands.")]
+    [Description("Used to unequip all items in hands, placing them in your backpack.")]
     private static void UnEquip_OnCommand(CommandEventArgs e)
     {
         var pm = e.Mobile as PlayerMobile;
