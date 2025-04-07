@@ -524,6 +524,13 @@ public class DefCarpentry : CraftSystem
         index = AddCraft(typeof(AnvilSouthDeed), 1044296, 1044334, 73.6, 98.6, typeof(Log), 1044041, 5, 1044351);
         AddSkill(index, SkillName.Blacksmith, 75.0, 80.0);
         AddRes(index, typeof(IronIngot), 1044036, 150, 1044037);
+        index = AddCraft(typeof(PortableForge), 1044296, "portable forge", 85.0, 95.0, typeof(Log), 1044041, 10, 1044351);
+        AddSkill(index, SkillName.Blacksmith, 85.0, 95.0);
+        AddRes(index, typeof(IronIngot), 1044036, 40, 1044037);
+        AddRes(index, typeof(ShadowIronIngot), "Shadow Iron Ingots", 30, 1044037);
+        AddRes(index, typeof(BronzeIngot), "Bronze Ingots", 30, 1044037);
+        
+
 
         // Training
         index = AddCraft(typeof(TrainingDummyEastDeed), 1044297, 1044335, 68.4, 93.4, typeof(Log), 1044041, 55, 1044351);
