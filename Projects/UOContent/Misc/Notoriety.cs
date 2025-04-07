@@ -270,111 +270,112 @@ namespace Server.Misc
 
         public static int CorpseNotoriety(Mobile source, Corpse target)
         {
-            if (target.AccessLevel > AccessLevel.Player)
-            {
-                return Notoriety.CanBeAttacked;
-            }
+            return Notoriety.CanBeAttacked;
+            //if (target.AccessLevel > AccessLevel.Player)
+            //{
+            //    return Notoriety.CanBeAttacked;
+            //}
 
-            Body body = target.Amount;
+            //Body body = target.Amount;
 
-            var sourceGuild = GetGuildFor(source.Guild as Guild, source);
-            var targetGuild = GetGuildFor(target.Guild, target.Owner);
+            //var sourceGuild = GetGuildFor(source.Guild as Guild, source);
+            //var targetGuild = GetGuildFor(target.Guild, target.Owner);
 
-            var srcFaction = Faction.Find(source, true, true);
-            var trgFaction = Faction.Find(target.Owner, true, true);
-            var list = target.Aggressors;
+            //var srcFaction = Faction.Find(source, true, true);
+            //var trgFaction = Faction.Find(target.Owner, true, true);
+            //var list = target.Aggressors;
 
-            if (sourceGuild != null && targetGuild != null)
-            {
-                if (sourceGuild == targetGuild || sourceGuild.IsAlly(targetGuild))
-                {
-                    return Notoriety.Ally;
-                }
+            //if (sourceGuild != null && targetGuild != null)
+            //{
+            //    if (sourceGuild == targetGuild || sourceGuild.IsAlly(targetGuild))
+            //    {
+            //        return Notoriety.Ally;
+            //    }
 
-                if (sourceGuild.IsEnemy(targetGuild))
-                {
-                    return Notoriety.Enemy;
-                }
-            }
+            //    if (sourceGuild.IsEnemy(targetGuild))
+            //    {
+            //        return Notoriety.Enemy;
+            //    }
+            //}
 
-            if (target.Owner is BaseCreature creature)
-            {
-                if (srcFaction != null && trgFaction != null && srcFaction != trgFaction && source.Map == Faction.Facet)
-                {
-                    return Notoriety.Enemy;
-                }
+            //if (target.Owner is BaseCreature creature)
+            //{
+            //    if (srcFaction != null && trgFaction != null && srcFaction != trgFaction && source.Map == Faction.Facet)
+            //    {
+            //        return Notoriety.Enemy;
+            //    }
 
-                if (CheckHouseFlag(source, creature, target.Location, target.Map))
-                {
-                    return Notoriety.CanBeAttacked;
-                }
+            //    if (CheckHouseFlag(source, creature, target.Location, target.Map))
+            //    {
+            //        return Notoriety.CanBeAttacked;
+            //    }
 
-                var actual = Notoriety.CanBeAttacked;
+            //    var actual = Notoriety.CanBeAttacked;
 
-                if (target.Kills >= 5 || body.IsMonster && IsSummoned(creature) || creature.AlwaysMurderer ||
-                    creature.IsAnimatedDead)
-                {
-                    actual = Notoriety.Murderer;
-                }
+            //    if (target.Kills >= 5 || body.IsMonster && IsSummoned(creature) || creature.AlwaysMurderer ||
+            //        creature.IsAnimatedDead)
+            //    {
+            //        actual = Notoriety.Murderer;
+            //    }
 
-                if (Core.Now >= target.TimeOfDeath + Corpse.MonsterLootRightSacrifice)
-                {
-                    return actual;
-                }
+            //    if (Core.Now >= target.TimeOfDeath + Corpse.MonsterLootRightSacrifice)
+            //    {
+            //        return actual;
+            //    }
 
-                var sourceParty = Party.Get(source);
+            //    var sourceParty = Party.Get(source);
 
-                for (var i = 0; i < list.Count; ++i)
-                {
-                    if (list[i] == source || sourceParty != null && Party.Get(list[i]) == sourceParty)
-                    {
-                        return actual;
-                    }
-                }
+            //    for (var i = 0; i < list.Count; ++i)
+            //    {
+            //        if (list[i] == source || sourceParty != null && Party.Get(list[i]) == sourceParty)
+            //        {
+            //            return actual;
+            //        }
+            //    }
 
-                return Notoriety.Innocent;
-            }
+            //    return Notoriety.Innocent;
+            //}
 
-            if (target.Kills >= 5 || body.IsMonster)
-            {
-                return Notoriety.Murderer;
-            }
+            //if (target.Kills >= 5 || body.IsMonster)
+            //{
+            //    return Notoriety.Murderer;
+            //}
 
-            if (target.Criminal && (target.Map?.Rules & MapRules.HarmfulRestrictions) == 0)
-            {
-                return Notoriety.Criminal;
-            }
+            //if (target.Criminal && (target.Map?.Rules & MapRules.HarmfulRestrictions) == 0)
+            //{
+            //    return Notoriety.Criminal;
+            //}
 
-            if (srcFaction != null && trgFaction != null && srcFaction != trgFaction && source.Map == Faction.Facet)
-            {
-                for (var i = 0; i < list.Count; ++i)
-                {
-                    if (list[i] == source || list[i] is BaseFactionGuard)
-                    {
-                        return Notoriety.Enemy;
-                    }
-                }
-            }
+            //if (srcFaction != null && trgFaction != null && srcFaction != trgFaction && source.Map == Faction.Facet)
+            //{
+            //    for (var i = 0; i < list.Count; ++i)
+            //    {
+            //        if (list[i] == source || list[i] is BaseFactionGuard)
+            //        {
+            //            return Notoriety.Enemy;
+            //        }
+            //    }
+            //}
 
-            if (CheckHouseFlag(source, target.Owner, target.Location, target.Map))
-            {
-                return Notoriety.CanBeAttacked;
-            }
+            //if (CheckHouseFlag(source, target.Owner, target.Location, target.Map))
+            //{
+            //    return Notoriety.CanBeAttacked;
+            //}
 
-            if (target.Owner is not PlayerMobile)
-            {
-                return Notoriety.CanBeAttacked;
-            }
+            //if (target.Owner is not PlayerMobile)
+            //{
+            //    return Notoriety.CanBeAttacked;
+            //}
 
-            for (var i = 0; i < list.Count; ++i)
-            {
-                if (list[i] == source)
-                {
-                    return Notoriety.CanBeAttacked;
-                }
-            }
+            //for (var i = 0; i < list.Count; ++i)
+            //{
+            //    if (list[i] == source)
+            //    {
+            //        return Notoriety.CanBeAttacked;
+            //    }
+            //}
 
-            return Notoriety.Innocent;
+            //return Notoriety.Innocent;
         }
 
         /* Must be thread-safe */
