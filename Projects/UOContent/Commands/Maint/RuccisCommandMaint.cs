@@ -37,8 +37,8 @@ namespace Server.Commands.Maint
                         var allTags = account.Tags.ToList();
                         foreach (var tag in allTags)
                         {
-                            CheckEquipTags(account, tag);
-                            CheckSortTags(account, tag);
+                            if (!CheckEquipTags(account, tag))
+                                CheckSortTags(account, tag);
                         }
                     }
                     catch (Exception ex)
@@ -50,7 +50,7 @@ namespace Server.Commands.Maint
 
         private static void CheckSortTags(Account account, AccountTag tag)
         {
-            //only check tags that are EquipSet_ tags
+            //only check tags that are SortBagSet_ tags
             if (tag.Name.StartsWith("SortBagSet_"))
             {
                 var parts = tag.Name.Split('_');
@@ -76,7 +76,7 @@ namespace Server.Commands.Maint
                 }
             }
         }
-        private static void CheckEquipTags(Account account, AccountTag tag)
+        private static bool CheckEquipTags(Account account, AccountTag tag)
         {
             //only check tags that are EquipSet_ tags
             if (tag.Name.StartsWith("EquipSet_"))
@@ -86,30 +86,32 @@ namespace Server.Commands.Maint
                 if (parts.Length != 3)
                 {
                     DeleteInvalidAccountTag(tag, account, "Tag name appears invalid.");
-                    return;
+                    return true;
                 }
                 uint serial = 0;
                 //if the serial isn't a valid uint, it's invalid
                 if (!uint.TryParse(parts[1], out serial))
                 {
                     DeleteInvalidAccountTag(tag, account, "character serial is not a valid uint");
-                    return;
+                    return true;
                 }
                 var pm = World.FindMobile((Serial)serial) as PlayerMobile;
                 //if the player isn't found or is deleted, it's invalid
                 if (pm == null || pm.Deleted)
                 {
                     DeleteInvalidAccountTag(tag, account, "Character does not exist");
-                    return;
+                    return true;
                 }
                 int setId = 0;
                 //if the setId isn't a valid int between 0 and 9, it's invalid
                 if (!int.TryParse(parts[2], out setId) || setId < 0 || setId > 9)
                 {
                     DeleteInvalidAccountTag(tag, account, "SetId out of 0-9 range");
-                    return;
+                    return true;
                 }
+                return true;
             }
+            return false;
         }
 
         private static void DeleteInvalidAccountTag(AccountTag tag, Account account, string reason, [CallerMemberName] string callerName = "")
