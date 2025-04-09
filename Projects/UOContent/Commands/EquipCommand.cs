@@ -139,7 +139,7 @@ public static class EquipCommand
             }
         }
         if (makeSound)
-            pm.PlaySound(0x48);
+            pm.PlaySound(0x57);
     }
 
     private static string GetEquipItemSetKeyString(PlayerMobile pm, int setId)
@@ -198,7 +198,7 @@ public static class EquipCommand
         if (pm == null)
             return;
         UnequipHands(pm, null);
-        pm.PlaySound(0x57);
+        pm.PlaySound(0x48);
         InitializeEquipItemAccountCache(pm);
     }
 
