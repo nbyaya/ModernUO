@@ -73,7 +73,10 @@ namespace Server.Commands
 
         private static bool ItemIsResourceItem(Item item)
         {
-            return item is ICommodity && item is not BaseReagent;
+            return
+                (item is ICommodity && !CommodityResources.IsNonResourceCommodity(item))
+                ||
+                CommodityResources.IsNonCommodityResource(item);
         }
 
         [Usage("SetBag [reagent|resource]")]

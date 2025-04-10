@@ -22,12 +22,11 @@ namespace Server.Items
             typeof(BaseOre)
         };
 
-        // We don't need to include reagents, as they have a
-        // common base class that is already excluded elsewhere.
         private static readonly Type[] NonResourceCommodityTypes = new Type[]
         {
             typeof(Arrow),
-            typeof(Bolt)
+            typeof(Bolt),
+            typeof(BaseReagent)
         };
 
         public static bool IsNonCommodityResource(Item item)
