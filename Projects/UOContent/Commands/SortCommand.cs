@@ -15,12 +15,16 @@ namespace Server.Commands
     public static class SortCommand
     {
         private const int maxStackAmount = 60000;
+        private const string Text_Clear = "clear";
+        private const string Text_Reagent = "reagent";
+        private const string Text_Resource = "resource";
+        private const string Text_Loot = "loot";
         private static Dictionary<uint, SortBags> m_sortBagsCache = new();
 
         public static void Configure()
         {
             CommandSystem.Register("Sort", AccessLevel.Player, new CommandEventHandler(Sort_OnCommand));
-            CommandSystem.Register("SetSortBag", AccessLevel.Player, new CommandEventHandler(SetBag_OnCommand));
+            CommandSystem.Register("SetBag", AccessLevel.Player, new CommandEventHandler(SetBag_OnCommand));
         }
 
         private static bool CheckContainerMoves(PlayerMobile pm, Container containerToSearch, Container reagentBag, Container resourceBag, bool movedAny, bool doAll)
@@ -79,7 +83,7 @@ namespace Server.Commands
                 CommodityResources.IsNonCommodityResource(item);
         }
 
-        [Usage("SetBag [reagent|resource]")]
+        [Usage("SetBag [reagent|resource|clear]")]
         [Description("Sets the bag to be used for sorting Reagents or Resources. Must be in your main backpack.")]
         private static void SetBag_OnCommand(CommandEventArgs e)
         {
@@ -92,7 +96,16 @@ namespace Server.Commands
             ValidateBagKind(ref kind, ref validBagKind);
             if (!validBagKind)
             {
-                pm.SendMessage($"Invalid bag type '{e.ArgString}'. Use 'reagent' or 'resource'.");
+                pm.SendMessage($"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'clear'.");
+            }
+            else if (kind == Text_Clear)
+            {
+                var acct = pm.Account as Account;
+                pm.SendMessage("Cleared sorting bags.");
+                m_sortBagsCache[pm.Serial.Value].ReagentBag = null;
+                m_sortBagsCache[pm.Serial.Value].ResourceBag = null;
+                m_sortBagsCache[pm.Serial.Value].LootBag = null;
+                acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
             }
             else
             {
@@ -119,12 +132,14 @@ namespace Server.Commands
                     if (reagentBag.Parent != pm.Backpack)
                     {
                         reagentBag = null;
-                        pm.SendMessage("Not sorting reagents. Reagent bag must be directly in your main backpack.");
+                        pm.SendMessage("Not sorting reagents.");
+                        pm.SendMessage("Reagent bag must be directly in your main backpack.");
                     }
                     if (resourceBag.Parent != pm.Backpack)
                     {
                         resourceBag = null;
-                        pm.SendMessage("Not sorting resources. Resource bag must be directly in your main backpack.");
+                        pm.SendMessage("Not sorting resources.");
+                        pm.SendMessage("Resource bag must be directly in your main backpack.");
                     }
                     else
                     {
@@ -205,16 +220,29 @@ namespace Server.Commands
         {
             if (kind.StartsWith("reg") || kind.StartsWith("reag"))
             {
-                kind = "reagent";
+                kind = Text_Reagent;
                 validBagKind = true;
             }
             else if (kind.StartsWith("res"))
             {
-                kind = "resource";
+                kind = Text_Resource;
                 validBagKind = true;
             }
+            else if (kind.StartsWith("cl"))
+            {
+                kind = Text_Clear;
+                validBagKind = true;
+            }
+            else if (kind.StartsWith("lo"))
+            {
+                kind = Text_Loot;
+                validBagKind = true;
+            }
+            else
+            {
+                validBagKind = false;
+            }
         }
-
         public class SortBags
         {
             public SortBags(Container reagentBag, Container resourceBag, Container lootBag = null)
@@ -293,16 +321,22 @@ namespace Server.Commands
                         pm.SendMessage("The bag must be in your main backpack.");
                         return;
                     }
-                    if (m_bagKind == "reagent")
+                    if (m_bagKind == Text_Reagent)
                     {
                         pm.SendMessage("Reagent bag set.");
                         m_sortBagsCache[pm.Serial.Value].ReagentBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
-                    else if (m_bagKind == "resource")
+                    else if (m_bagKind == Text_Resource)
                     {
                         pm.SendMessage("Resource bag set.");
                         m_sortBagsCache[pm.Serial.Value].ResourceBag = bag;
+                        acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
+                    }
+                    else if (m_bagKind == Text_Loot)
+                    {
+                        pm.SendMessage("Loot bag set.");
+                        m_sortBagsCache[pm.Serial.Value].LootBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
                     else
