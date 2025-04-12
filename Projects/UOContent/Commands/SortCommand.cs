@@ -29,34 +29,40 @@ namespace Server.Commands
 
         private static bool CheckContainerMoves(PlayerMobile pm, Container containerToSearch, Container reagentBag, Container resourceBag, bool movedAny, bool doAll)
         {
-            foreach (var item in containerToSearch.Items.ToList())
+            try
             {
-                if (doAll && item is Container cont)
+                foreach (var item in containerToSearch.Items.ToList())
                 {
-                    if (CheckContainerMoves(pm, cont, reagentBag, resourceBag, movedAny, doAll))
-                        movedAny = true;
-                    continue;
-                }
-                if (reagentBag is not null && reagentBag.Serial != containerToSearch.Serial)
-                {
-                    if (item is BaseReagent)
+                    if (doAll && item is Container cont)
                     {
-                        TryToMoveItemToBag(item, reagentBag);
-                        movedAny = true;
+                        if (CheckContainerMoves(pm, cont, reagentBag, resourceBag, movedAny, doAll))
+                            movedAny = true;
                         continue;
                     }
-                }
-                if (resourceBag is not null && resourceBag.Serial != containerToSearch.Serial)
-                {
-                    if (ItemIsResourceItem(item))
+                    if (reagentBag is not null && reagentBag.Serial != containerToSearch.Serial)
                     {
-                        TryToMoveItemToBag(item, resourceBag);
-                        movedAny = true;
-                        continue;
+                        if (item is BaseReagent)
+                        {
+                            TryToMoveItemToBag(item, reagentBag);
+                            movedAny = true;
+                            continue;
+                        }
+                    }
+                    if (resourceBag is not null && resourceBag.Serial != containerToSearch.Serial)
+                    {
+                        if (ItemIsResourceItem(item))
+                        {
+                            TryToMoveItemToBag(item, resourceBag);
+                            movedAny = true;
+                            continue;
+                        }
                     }
                 }
             }
-
+            catch (Exception ex)
+            {
+                pm.SendMessage($"Error checking container moves: {ex.Message}");
+            }
             return movedAny;
         }
 
@@ -129,13 +135,13 @@ namespace Server.Commands
                 var resourceBag = m_sortBagsCache[pm.Serial.Value].ResourceBag;
                 if (reagentBag != null || resourceBag != null)
                 {
-                    if (reagentBag.Parent != pm.Backpack)
+                    if (reagentBag is not null && reagentBag.Parent != pm.Backpack)
                     {
                         reagentBag = null;
                         pm.SendMessage("Not sorting reagents.");
                         pm.SendMessage("Reagent bag must be directly in your main backpack.");
                     }
-                    if (resourceBag.Parent != pm.Backpack)
+                    if (resourceBag is not null && resourceBag.Parent != pm.Backpack)
                     {
                         resourceBag = null;
                         pm.SendMessage("Not sorting resources.");
@@ -170,7 +176,8 @@ namespace Server.Commands
                 }
                 else
                 {
-                    pm.SendMessage("An error occurred while sorting items.");
+                    pm.SendMessage($"Error sorting items: {ex.Message}");
+                    //pm.SendMessage("An error occurred while sorting items.");
                 }
             }
         }
