@@ -7693,7 +7693,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
 
     public void DefaultMobileInit()
     {
-        m_StatCap = 225;
+        m_StatCap = 325;
         m_FollowersMax = 5;
         Skills = new Skills(this);
         Items = new List<Item>();
