@@ -14,6 +14,7 @@ public partial class SoulPhylactery : Item
         Name = "a soul phylactery";
         Hue = 0xABB;
         Light = LightType.Circle150;
+        LootType = LootType.Blessed;
         Weight = 1.0;
     }
 
