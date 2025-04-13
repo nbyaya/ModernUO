@@ -270,7 +270,7 @@ public partial class Harrower : BaseCreature
             var m = toGive[i % toGive.Count];
 
             m.SendLocalizedMessage(1049524); // You have received a scroll of power!
-            m.AddToBackpack(new StatCapScroll(225 + level));
+            m.AddToBackpack(new StatCapScroll(PlayerStatCap.StatCap + level));
 
             if (m is not PlayerMobile pm)
             {
@@ -296,7 +296,7 @@ public partial class Harrower : BaseCreature
             if (chance > 0 && chance > Utility.Random(100))
             {
                 prot.SendLocalizedMessage(1049368); // You have been rewarded for your dedication to Justice!
-                prot.AddToBackpack(new StatCapScroll(225 + level));
+                prot.AddToBackpack(new StatCapScroll(PlayerStatCap.StatCap + level));
             }
         }
     }
