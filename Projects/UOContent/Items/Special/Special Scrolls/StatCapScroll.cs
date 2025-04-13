@@ -42,7 +42,7 @@ public partial class StatCapScroll : SpecialScroll
     }
 
     public override string DefaultTitle =>
-        $"Power Scroll ({((int)Value - 225 >= 0 ? "+" : "")}{(int)Value - 225} Maximum Stats):".Color(0xFFFFFF);
+        $"Power Scroll ({((int)Value - PlayerStatCap.StatCap >= 0 ? "+" : "")}{(int)Value - PlayerStatCap.StatCap} Maximum Stats):".Color(0xFFFFFF);
 
     public override void AddNameProperty(IPropertyList list)
     {
@@ -61,7 +61,7 @@ public partial class StatCapScroll : SpecialScroll
         }
         else
         {
-            var diff = truncValue - 225;
+            var diff = truncValue - PlayerStatCap.StatCap;
             list.Add($"a scroll of power ({(diff >= 0 ? "+" : "")}{diff} Maximum Stats)");
         }
     }
@@ -69,7 +69,7 @@ public partial class StatCapScroll : SpecialScroll
     public override void OnSingleClick(Mobile from)
     {
         var truncValue = (int)Value;
-        var level = (truncValue - 230) / 5;
+        var level = (truncValue - (PlayerStatCap.StatCap+5)) / 5;
 
         if (level is >= 0 and <= 4)
         {
@@ -77,7 +77,7 @@ public partial class StatCapScroll : SpecialScroll
         }
         else
         {
-            var diff = truncValue - 225;
+            var diff = truncValue - PlayerStatCap.StatCap;
             LabelTo(from, $"a scroll of power ({(diff >= 0 ? "+" : "")}{diff} Maximum Stats)");
         }
     }
