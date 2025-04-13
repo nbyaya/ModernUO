@@ -10,19 +10,18 @@ public partial class SoulPhylactery : Item
     [Constructible]
     public SoulPhylactery() : base(0x1F1C)
 	{
+        Name = "a soul phylactery"; 
         Hue = 0xABB;
         Light = LightType.Circle150;
 		Weight = 1.0;
     }
 
-    public override string DefaultName => "a soul phylactery";
-
-    public void HandlePlayerDeath(PlayerMobile m)
+        public void HandlePlayerDeath(PlayerMobile m)
     {
         if (IsChildOf(m.Backpack) && !m.Alive)
 
         {
-            m.SendGump(new ResurrectGump(m));
+            m.SendGump(new ResurrectGump(m,this));
         }
                 
         
