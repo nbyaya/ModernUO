@@ -13,11 +13,16 @@ public partial class SoulPhylactery : Item
     {
         Name = "a soul phylactery";
         Hue = 0xABB;
-        Light = LightType.Circle150;
         LootType = LootType.Blessed;
         Weight = 1.0;
+        
     }
-
+    public override void GetProperties(IPropertyList list)
+    {
+        base.GetProperties(list);
+        list.Add("Keep in your backpack to be resurrected on death...");
+        list.Add("Once");
+    }
     public static void CheckSoulPhylactery(PlayerMobile pm)
     {
         if (pm == null || pm.Deleted || pm.Alive)

@@ -2655,6 +2655,8 @@ namespace Server.Mobiles
             }
 
             PlayerDeathEvent(this);
+
+            SoulPhylactery.CheckSoulPhylactery(this);
         }
 
         public override bool MutateSpeech(List<Mobile> hears, ref string text, ref object context)
