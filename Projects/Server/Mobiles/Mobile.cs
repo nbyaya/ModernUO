@@ -6333,7 +6333,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
 
                     if (version < 3)
                     {
-                        m_StatCap = 225;
+                        m_StatCap = 325;
                     }
 
                     if (version < 15)
