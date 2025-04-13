@@ -13,7 +13,8 @@ public partial class SoulPhylactery : Item
         Name = "a soul phylactery"; 
         Hue = 0xABB;
         Light = LightType.Circle150;
-		Weight = 1.0;
+        LootType = LootType.Blessed;
+        Weight = 1.0;
     }
 
         public void HandlePlayerDeath(PlayerMobile m)
