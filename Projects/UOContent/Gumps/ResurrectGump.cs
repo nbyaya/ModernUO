@@ -3,6 +3,7 @@ using Server.Engines.Virtues;
 using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
+using Server.Items;
 
 namespace Server.Gumps;
 
@@ -23,7 +24,7 @@ public class ResurrectGump : DynamicGump
     private readonly double _hitsScalar;
     private readonly ResurrectMessage _resurrectMessage;
     private readonly int _price;
-    private readonly Item _soulPhylactery;
+    private readonly SoulPhylactery _soulPhylactery;
     public override bool Singleton => true;
 
     public static void TryGiveStatLoss(PlayerMobile player)
@@ -68,7 +69,7 @@ public class ResurrectGump : DynamicGump
         }
     }
 
-    public ResurrectGump(Mobile healer, Item soulPhylactery) :
+    public ResurrectGump(Mobile healer, SoulPhylactery soulPhylactery) :
         this(healer, ResurrectMessage.Generic, false, 0, 0, soulPhylactery)
     {
     }
@@ -82,7 +83,7 @@ public class ResurrectGump : DynamicGump
 
     public ResurrectGump(
         Mobile healer, ResurrectMessage msg = ResurrectMessage.Generic,
-        bool fromSacrifice = false, double hitsScalar = 0.0, int price = 0, Item soulPhylactery = null
+        bool fromSacrifice = false, double hitsScalar = 0.0, int price = 0, SoulPhylactery soulPhylactery = null
     ) : base(100, 0)
     {
         _healer = healer;
