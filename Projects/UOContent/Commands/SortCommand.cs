@@ -61,7 +61,7 @@ namespace Server.Commands
             }
             catch (Exception ex)
             {
-                pm.SendMessage($"Error checking container moves: {ex.Message}");
+                pm.SendMessage(MessageHues.RedErrorHue, $"Error checking container moves: {ex.Message}");
             }
             return movedAny;
         }
@@ -102,7 +102,7 @@ namespace Server.Commands
             ValidateBagKind(ref kind, ref validBagKind);
             if (!validBagKind)
             {
-                pm.SendMessage($"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'clear'.");
+                pm.SendMessage(MessageHues.RedErrorHue, $"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'clear'.");
             }
             else if (kind == Text_Clear)
             {
@@ -116,7 +116,7 @@ namespace Server.Commands
             else
             {
                 pm.Target = new InternalTarget(kind);
-                pm.SendMessage($"Target the {kind} bag you want to use for sorting. It must be in your main backpack.");
+                pm.SendMessage(MessageHues.YellowNoticeHue, $"Target the {kind} bag you want to use for sorting. It must be in your main backpack.");
             }
         }
 
@@ -138,14 +138,14 @@ namespace Server.Commands
                     if (reagentBag is not null && reagentBag.Parent != pm.Backpack)
                     {
                         reagentBag = null;
-                        pm.SendMessage("Not sorting reagents.");
-                        pm.SendMessage("Reagent bag must be directly in your main backpack.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Not sorting reagents.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Reagent bag must be directly in your main backpack.");
                     }
                     if (resourceBag is not null && resourceBag.Parent != pm.Backpack)
                     {
                         resourceBag = null;
-                        pm.SendMessage("Not sorting resources.");
-                        pm.SendMessage("Resource bag must be directly in your main backpack.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Not sorting resources.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Resource bag must be directly in your main backpack.");
                     }
                     else
                     {
@@ -154,29 +154,29 @@ namespace Server.Commands
                         movedAny = CheckContainerMoves(pm, mainPack, reagentBag, resourceBag, movedAny, doAll);
                         if (movedAny)
                         {
-                            pm.SendMessage("Sorted items into bags.");
+                            pm.SendMessage(MessageHues.GreenSuccessHue, "Sorted items into bags.");
                             pm.PlaySound(0x48);
                         }
                         else
                         {
-                            pm.SendMessage("No items to sort.");
+                            pm.SendMessage(MessageHues.YellowNoticeHue, "No items to sort.");
                         }
                     }
                 }
                 else
                 {
-                    pm.SendMessage("No bags set for sorting. Use [SetSortBag [reagent|resource] to set the bags.");
+                    pm.SendMessage(MessageHues.RedErrorHue, "No bags set for sorting. Use [SetSortBag [reagent|resource] to set the bags.");
                 }
             }
             catch (Exception ex)
             {
                 if (pm.AccessLevel > AccessLevel.Player)
                 {
-                    pm.SendMessage($"Error sorting items: {ex.Message}");
+                    pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
                 }
                 else
                 {
-                    pm.SendMessage($"Error sorting items: {ex.Message}");
+                    pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
                     //pm.SendMessage("An error occurred while sorting items.");
                 }
             }
@@ -320,48 +320,41 @@ namespace Server.Commands
                 {
                     if (bag == null)
                     {
-                        pm.SendMessage("That is not a container.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "That is not a container.");
                         return;
                     }
                     if (bag.Parent != pm.Backpack)
                     {
-                        pm.SendMessage("The bag must be in your main backpack.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "The bag must be in your main backpack.");
                         return;
                     }
                     if (m_bagKind == Text_Reagent)
                     {
-                        pm.SendMessage("Reagent bag set.");
+                        pm.SendMessage(MessageHues.GreenSuccessHue, "Reagent bag set.");
                         m_sortBagsCache[pm.Serial.Value].ReagentBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
                     else if (m_bagKind == Text_Resource)
                     {
-                        pm.SendMessage("Resource bag set.");
+                        pm.SendMessage(MessageHues.GreenSuccessHue, "Resource bag set.");
                         m_sortBagsCache[pm.Serial.Value].ResourceBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
                     else if (m_bagKind == Text_Loot)
                     {
-                        pm.SendMessage("Loot bag set.");
+                        pm.SendMessage(MessageHues.GreenSuccessHue, "Loot bag set.");
                         m_sortBagsCache[pm.Serial.Value].LootBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
                     else
                     {
-                        pm.SendMessage("Invalid bag type. Use 'reagent' or 'resource'.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Invalid bag type. Use 'reagent', 'resource' or 'loot'.");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (pm.AccessLevel > AccessLevel.Player)
-                    {
-                        pm.SendMessage($"Error setting bag: {ex.Message}");
-                    }
-                    else
-                    {
-                        pm.SendMessage("An error occurred while setting the bag.");
-                    }
+                    pm.SendMessage(MessageHues.RedErrorHue, $"Error setting bag: {ex.Message}");
                 }
             }
         }

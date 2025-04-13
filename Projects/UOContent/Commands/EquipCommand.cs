@@ -96,20 +96,20 @@ public static class EquipCommand
         InitializeEquipItemAccountCache(pm);
         if (e.Length != 1)
         {
-            pm.SendMessage("Usage: [Equip (0-9)");
+            pm.SendMessage(MessageHues.YellowNoticeHue, "Usage: [Equip (0-9)");
             return;
         }
         var setId = e.GetInt32(0);
         if (setId < 0 || setId > 9)
         {
-            pm.SendMessage("Usage: [Equip (0-9)");
+            pm.SendMessage(MessageHues.YellowNoticeHue, "Usage: [Equip (0-9)");
             return;
         }
         var pmSerial = pm.Serial.Value;
         var pair = m_playerWeaponsCache[pmSerial][setId];
         if (pair == null)
         {
-            pm.SendMessage($"No weapons found for set {setId}.");
+            pm.SendMessage(MessageHues.YellowNoticeHue, $"No weapons found for set {setId}.");
             return;
         }
         UnequipHands(pm, pair);
@@ -118,7 +118,7 @@ public static class EquipCommand
         {
             if (!pm.Backpack.Items.Contains(pair.OneHanded))
             {
-                pm.SendMessage($"One handed item not found in backpack.");
+                pm.SendMessage(MessageHues.RedErrorHue, $"One handed item not found in backpack.");
             }
             else
             {
@@ -130,7 +130,7 @@ public static class EquipCommand
         {
             if (!pm.Backpack.Items.Contains(pair.TwoHanded))
             {
-                pm.SendMessage($"Two handed item not found in backpack.");
+                pm.SendMessage(MessageHues.RedErrorHue, $"Two handed item not found in backpack.");
             }
             else
             {
@@ -173,13 +173,13 @@ public static class EquipCommand
         InitializeEquipItemAccountCache(pm);
         if (e.Length == 0)
         {
-            pm.SendMessage("You must specify a set number.");
+            pm.SendMessage(MessageHues.RedErrorHue, "You must specify a set number.");
             return;
         }
         var setId = e.GetInt32(0);
         if (setId < 0 || setId > 9)
         {
-            pm.SendMessage("Invalid set number.");
+            pm.SendMessage(MessageHues.RedErrorHue, "Invalid set number.");
             return;
         }
         var weaponSets = m_playerWeaponsCache[pm.Serial.Value];
@@ -187,7 +187,7 @@ public static class EquipCommand
         var acct = pm.Account as Account;
         acct.SetTag(GetEquipItemSetKeyString(pm, setId), pair.Serialize());
         weaponSets[setId] = pair;
-        pm.SendMessage($"Weapon set {setId} saved.");
+        pm.SendMessage(MessageHues.LightBlueSystemHue, $"Weapon set {setId} saved.");
     }
 
     [Usage("UnEquip")]
