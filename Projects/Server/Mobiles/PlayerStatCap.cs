@@ -9,5 +9,7 @@ namespace Server.Mobiles
     public static class PlayerStatCap
     {
         public const int StatCap = 325;
+
+        public const int OldStatCap = 225;
     }
 }
