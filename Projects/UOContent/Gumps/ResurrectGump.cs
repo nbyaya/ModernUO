@@ -23,7 +23,7 @@ public class ResurrectGump : DynamicGump
     private readonly double _hitsScalar;
     private readonly ResurrectMessage _resurrectMessage;
     private readonly int _price;
-
+    private readonly Item _soulPhylactery;
     public override bool Singleton => true;
 
     public static void TryGiveStatLoss(PlayerMobile player)
@@ -68,6 +68,10 @@ public class ResurrectGump : DynamicGump
         }
     }
 
+    public ResurrectGump(Mobile healer, Item soulPhylactery) :
+        this(healer, ResurrectMessage.Generic, false, 0, 0, soulPhylactery)
+    {
+    }
     public ResurrectGump(Mobile healer, double hitsScalar) : this(healer, ResurrectMessage.Generic, false, hitsScalar)
     {
     }
@@ -78,7 +82,7 @@ public class ResurrectGump : DynamicGump
 
     public ResurrectGump(
         Mobile healer, ResurrectMessage msg = ResurrectMessage.Generic,
-        bool fromSacrifice = false, double hitsScalar = 0.0, int price = 0
+        bool fromSacrifice = false, double hitsScalar = 0.0, int price = 0, Item soulPhylactery = null
     ) : base(100, 0)
     {
         _healer = healer;
@@ -86,6 +90,7 @@ public class ResurrectGump : DynamicGump
         _hitsScalar = hitsScalar;
         _resurrectMessage = msg;
         _price = price;
+        _soulPhylactery = soulPhylactery;
     }
 
     protected override void BuildLayout(ref DynamicGumpBuilder builder)
@@ -206,7 +211,11 @@ public class ResurrectGump : DynamicGump
                 return;
             }
         }
-
+        if (_soulPhylactery != null)
+        {
+            _soulPhylactery.Delete();
+            from.SendMessage(MessageHues.GreenSuccessHue, "The soul phylactery shatters as your soul returns to your body.");
+        }
         from.PlaySound(0x214);
         from.FixedEffect(0x376A, 10, 16);
 
