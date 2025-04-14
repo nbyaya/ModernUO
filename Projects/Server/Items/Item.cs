@@ -2168,6 +2168,11 @@ public class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropertyListEnt
             return DeathMoveResult.RemainEquipped;
         }
 
+        if(!parent.Player)
+        {
+            return DeathMoveResult.MoveToCorpse;
+        }
+
         if (parent.KeepsItemsOnDeath)
         {
             return DeathMoveResult.MoveToBackpack;
