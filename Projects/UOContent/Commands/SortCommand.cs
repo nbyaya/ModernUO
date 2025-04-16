@@ -165,7 +165,7 @@ namespace Server.Commands
                 }
                 else
                 {
-                    pm.SendMessage(MessageHues.RedErrorHue, "No bags set for sorting. Use [SetSortBag [reagent|resource] to set the bags.");
+                    pm.SendMessage(MessageHues.RedErrorHue, "No bags set for sorting. Use [SetBag [reagent|resource] to set the bags.");
                 }
             }
             catch (Exception ex)
