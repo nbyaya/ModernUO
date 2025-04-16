@@ -19,7 +19,7 @@ namespace Server.Items
                 list.Add(new LockKarmaEntry(mobile.KarmaLocked));
             }
 
-            list.Add(new ResurrectEntry(from.Alive));
+            list.Add(new ResurrectEntry(!from.Alive));
 
             if (Core.AOS)
             {
