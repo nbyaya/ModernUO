@@ -2,14 +2,28 @@ using ModernUO.Serialization;
 using Server.Mobiles;
 using Server.Gumps;
 using System;
+using Server;
 
 namespace Server.Items;
 
 [SerializationGenerator(0, false)]
 public partial class SoulPhylactery : Item
 {
-    private Serial m_ownerSerial = (Serial)0;
-    private const int EmptyHue = 0xABB;
+
+    [SerializableProperty(0)]
+    [CommandProperty(AccessLevel.GameMaster)]
+    public Serial OwnerSerial
+    {
+        get { return _ownerSerial; }
+        set
+        {
+            if (value == _ownerSerial)
+                return;
+            _ownerSerial = value;
+            InvalidateProperties();
+        }
+    }
+    private const int EmptyHue = 0x3a9;
     private const int FullHue = 0xABB;
 
     [Constructible]
@@ -26,7 +40,7 @@ public partial class SoulPhylactery : Item
             return;
 
         //Searches for a phylactery in the player's backpack that is bound to their soul.
-        SoulPhylactery phylactery = pm.Backpack?.FindItemByType<SoulPhylactery>(true, sp => sp.m_ownerSerial == pm.Serial);
+        SoulPhylactery phylactery = pm.Backpack?.FindItemByType<SoulPhylactery>(true, sp => sp.OwnerSerial == pm.Serial);
         if (phylactery is not null)
         {
             pm.SendGump(new ResurrectGump(pm, phylactery));
@@ -36,11 +50,17 @@ public partial class SoulPhylactery : Item
     public override void GetProperties(IPropertyList list)
     {
         base.GetProperties(list);
-        list.Add("Keep in your backpack to be resurrected on death...");
-        list.Add("Once");
-
-        //Update this to show appropriate info depending on whether it has been bound to a soul.
-
+        if (OwnerSerial == (Serial)0)
+        {
+            list.Add("This phylactery is not bound to a soul.");
+            list.Add("Double-click at a shrine to bind it to yours.");
+        }
+        else
+        {
+            list.Add("Keep in your backpack to be resurrected on death...");
+            list.Add("Once");
+            list.Add("(only works for its owner)");
+        }
     }
 
     public override void OnDoubleClick(Mobile from)
@@ -51,37 +71,55 @@ public partial class SoulPhylactery : Item
         if (pm == null || pm.Deleted)
             return;
 
-        if (m_ownerSerial == (Serial)0)
+        if (OwnerSerial == (Serial)0)
         {
-
-            //Check if they are near a shrine
-            throw new NotImplementedException();
-
-            if(!from.Backpack.Items.Contains(this))
+            try
+            {
+                bool foundShrine = false;
+                foreach (var item in pm.GetItemsInRange(2))
+                {
+                    if (item is IAnkh)
+                    {
+                        foundShrine = true;
+                        break;
+                    }
+                }
+                if (!foundShrine)
+                {
+                    pm.SendMessage(MessageHues.RedErrorHue,
+                        "You must be near a shrine to bind this phylactery to your soul.");
+                    return;
+                }
+                if (!from.Backpack.Items.Contains(this))
+                {
+                    pm.SendMessage(MessageHues.RedErrorHue,
+                        "You must have this phylactery in your backpack to bind it to your soul.");
+                    return;
+                }
+                OwnerSerial = pm.Serial;
+                Name = "a soul phylactery of " + pm.Name;
+                Hue = FullHue;
+                LootType = LootType.Blessed;
+                pm.SendMessage(MessageHues.GreenNoticeHue,
+                    "This phylactery is now bound to your soul. Keep it in your backpack to be resurrected if you perish.");
+                InvalidateProperties();
+                Effects.SendTargetParticles(pm, 0x373A, 10, 30, 5007, EffectLayer.Waist);
+                pm.PlaySound(0x1F3);
+            }
+            catch (Exception ex)
             {
                 pm.SendMessage(MessageHues.RedErrorHue,
-                    "You must have this phylactery in your backpack to bind it to your soul.");
-                return;
+                    "ERROR: " + ex.Message);
             }
-            m_ownerSerial = pm.Serial;
-            Name = "a soul phylactery of " + pm.Name;
-            Hue = FullHue;
-            LootType = LootType.Blessed;
-            pm.SendMessage(MessageHues.GreenSuccessHue,
-                "This phylactery is now bound to your soul. Keep it in your backpack to be resurrected if you perish.");
-
-            //Make a sound and maybe a graphic effect here?
-            throw new NotImplementedException();
-
         }
-        else if (m_ownerSerial == (Serial)from.Serial)
+        else if (OwnerSerial == (Serial)from.Serial)
         {
-            pm.SendMessage(MessageHues.YellowNoticeHue,
+            pm.SendMessage(MessageHues.BlueNoticeHue,
                 "This phylactery is bound to your soul. Keep it in your backpack to be resurrected if you perish.");
         }
         else
         {
-            pm.SendMessage(MessageHues.RedErrorHue,
+            pm.SendMessage(MessageHues.YellowNoticeHue,
                 "This phylactery is bound to another soul. It will not work for you.");
         }
     }
