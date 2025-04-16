@@ -6,6 +6,10 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
+    /// <summary>
+    /// Marker Interface simply to identify the Ankh items.
+    /// </summary>
+    public interface IAnkh { }
     public static class Ankhs
     {
         public const int ResurrectRange = 2;
@@ -25,6 +29,7 @@ namespace Server.Items
             {
                 list.Add(new TitheEntry(from.Alive));
             }
+
         }
 
         public static void Resurrect(Mobile m, Item item)
@@ -105,10 +110,11 @@ namespace Server.Items
                 }
             }
         }
+
     }
 
     [SerializationGenerator(0, false)]
-    public partial class AnkhWest : Item
+    public partial class AnkhWest : Item, IAnkh
     {
         [SerializableField(0, getter: "private", setter: "private")]
         private InternalItem _item;
@@ -180,7 +186,7 @@ namespace Server.Items
         }
 
         [SerializationGenerator(0, false)]
-        private partial class InternalItem : Item
+        private partial class InternalItem : Item, IAnkh
         {
             [SerializableField(0)]
             private AnkhWest _item;
@@ -254,7 +260,7 @@ namespace Server.Items
 
     [TypeAlias("Server.Items.AnkhEast")]
     [SerializationGenerator(0, false)]
-    public partial class AnkhNorth : Item
+    public partial class AnkhNorth : Item, IAnkh
     {
         [SerializableField(0, getter: "private", setter: "private")]
         private InternalItem _item;
@@ -328,7 +334,7 @@ namespace Server.Items
 
         [TypeAlias("Server.Items.AnkhEast+InternalItem")]
         [SerializationGenerator(0, false)]
-        private partial class InternalItem : Item
+        private partial class InternalItem : Item, IAnkh
         {
             [SerializableField(0)]
             private AnkhNorth _item;
