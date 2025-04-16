@@ -215,7 +215,7 @@ public class ResurrectGump : DynamicGump
         if (_soulPhylactery != null)
         {
             _soulPhylactery.Delete();
-            from.SendMessage(MessageHues.GreenSuccessHue, "The soul phylactery shatters as your soul returns to your body.");
+            from.SendMessage(MessageHues.GreenNoticeHue, "The soul phylactery shatters as your soul returns to your body.");
         }
         from.PlaySound(0x214);
         from.FixedEffect(0x376A, 10, 16);

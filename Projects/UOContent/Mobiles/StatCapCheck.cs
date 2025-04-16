@@ -17,7 +17,7 @@ namespace Server.Mobiles
                 {
                     int delta =  m.StatCap - PlayerStatCap.OldStatCap;
                     int newCap = PlayerStatCap.StatCap + delta;
-                    m.SendMessage(MessageHues.YellowNoticeHue, $"Your stat cap is set to the old value ({m.StatCap}). It is being updated to {newCap}");
+                    m.SendMessage(MessageHues.BlueNoticeHue, $"Your stat cap is set to the old value ({m.StatCap}). It is being updated to {newCap}");
                     m.StatCap = newCap;
                 }
             }

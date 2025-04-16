@@ -26,7 +26,6 @@ namespace Server.Commands
             CommandSystem.Register("Sort", AccessLevel.Player, new CommandEventHandler(Sort_OnCommand));
             CommandSystem.Register("SetBag", AccessLevel.Player, new CommandEventHandler(SetBag_OnCommand));
         }
-
         private static bool CheckContainerMoves(PlayerMobile pm, Container containerToSearch, Container reagentBag, Container resourceBag, bool movedAny, bool doAll)
         {
             try
@@ -88,7 +87,7 @@ namespace Server.Commands
                 ||
                 CommodityResources.IsNonCommodityResource(item);
         }
-
+        
         [Usage("SetBag [reagent|resource|clear]")]
         [Description("Sets the bag to be used for sorting Reagents or Resources. Must be in your main backpack.")]
         private static void SetBag_OnCommand(CommandEventArgs e)
@@ -154,7 +153,7 @@ namespace Server.Commands
                         movedAny = CheckContainerMoves(pm, mainPack, reagentBag, resourceBag, movedAny, doAll);
                         if (movedAny)
                         {
-                            pm.SendMessage(MessageHues.GreenSuccessHue, "Sorted items into bags.");
+                            pm.SendMessage(MessageHues.GreenNoticeHue, "Sorted items into bags.");
                             pm.PlaySound(0x48);
                         }
                         else
@@ -330,19 +329,19 @@ namespace Server.Commands
                     }
                     if (m_bagKind == Text_Reagent)
                     {
-                        pm.SendMessage(MessageHues.GreenSuccessHue, "Reagent bag set.");
+                        pm.SendMessage(MessageHues.GreenNoticeHue, "Reagent bag set.");
                         m_sortBagsCache[pm.Serial.Value].ReagentBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
                     else if (m_bagKind == Text_Resource)
                     {
-                        pm.SendMessage(MessageHues.GreenSuccessHue, "Resource bag set.");
+                        pm.SendMessage(MessageHues.GreenNoticeHue, "Resource bag set.");
                         m_sortBagsCache[pm.Serial.Value].ResourceBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }
                     else if (m_bagKind == Text_Loot)
                     {
-                        pm.SendMessage(MessageHues.GreenSuccessHue, "Loot bag set.");
+                        pm.SendMessage(MessageHues.GreenNoticeHue, "Loot bag set.");
                         m_sortBagsCache[pm.Serial.Value].LootBag = bag;
                         acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
                     }

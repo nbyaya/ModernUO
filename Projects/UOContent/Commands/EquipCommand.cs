@@ -187,7 +187,7 @@ public static class EquipCommand
         var acct = pm.Account as Account;
         acct.SetTag(GetEquipItemSetKeyString(pm, setId), pair.Serialize());
         weaponSets[setId] = pair;
-        pm.SendMessage(MessageHues.LightBlueSystemHue, $"Weapon set {setId} saved.");
+        pm.SendMessage(MessageHues.BlueNoticeHue, $"Weapon set {setId} saved.");
     }
 
     [Usage("UnEquip")]
