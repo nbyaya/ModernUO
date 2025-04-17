@@ -18,6 +18,8 @@ namespace Server
 
         public static readonly LootPackItem[] GemItems = [new LootPackItem(typeof(Amber), 1)];
 
+        public static readonly LootPackItem[] PhylacteryItems = [new LootPackItem(typeof(SoulPhylactery), 1)];
+
         public static readonly LootPackItem[] PotionItems =
         [
             new LootPackItem(typeof(AgilityPotion), 1),
@@ -256,6 +258,24 @@ namespace Server
             new LootPackItem(typeof(BaseShield), 52),
             new LootPackItem(typeof(BaseJewel), 207)
         ];
+
+        public static readonly LootPack SoulPhylacteries2p5Pct = new(
+            [
+                new LootPackEntry(false, PhylacteryItems, 2.50, 1)
+            ]
+        );
+
+        public static readonly LootPack SoulPhylacteries5Pct = new(
+            [
+                new LootPackEntry(false, PhylacteryItems, 5.00, 1)
+            ]
+        );
+
+        public static readonly LootPack SoulPhylacteries10Pct = new(
+            [
+                new LootPackEntry(false, PhylacteryItems, 10.00, 1)
+            ]
+        );
 
         public static readonly LootPack SePoor = new(
             [

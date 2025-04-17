@@ -63,6 +63,7 @@ namespace Server.Mobiles
         {
             AddLoot(LootPack.FilthyRich);
             AddLoot(LootPack.MedScrolls, 2);
+            AddLoot(LootPack.SoulPhylacteries5Pct);
         }
     }
 }

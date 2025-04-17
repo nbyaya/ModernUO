@@ -61,6 +61,7 @@ namespace Server.Mobiles
         {
             AddLoot(LootPack.Rich);
             AddLoot(LootPack.MedScrolls, 2);
+            AddLoot(LootPack.SoulPhylacteries2p5Pct);
         }
     }
 }
