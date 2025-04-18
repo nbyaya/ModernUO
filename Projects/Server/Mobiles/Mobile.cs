@@ -6338,7 +6338,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
 
                     if (version < 3)
                     {
-                        m_StatCap = PlayerStatCap.StatCap;
+                        m_StatCap = PlayerStatAndSkillCapInfo.StatCap;
                     }
 
                     if (version < 15)
@@ -7698,7 +7698,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
 
     public void DefaultMobileInit()
     {
-        m_StatCap = PlayerStatCap.StatCap;
+        m_StatCap = PlayerStatAndSkillCapInfo.StatCap;
         m_FollowersMax = 5;
         Skills = new Skills(this);
         Items = new List<Item>();

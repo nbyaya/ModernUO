@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using Server.Mobiles;
 using Server.Network;
 
 namespace Server;
@@ -460,7 +461,7 @@ public class Skills
     public Skills(Mobile owner)
     {
         Owner = owner;
-        Cap = 10000;
+        Cap = PlayerStatAndSkillCapInfo.SkillsCap;
 
         var info = SkillInfo.Table;
 
