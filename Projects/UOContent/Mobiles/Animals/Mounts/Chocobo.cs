@@ -1,3 +1,4 @@
+using System;
 using ModernUO.Serialization;
 using Server.Items;
 
@@ -7,7 +8,11 @@ namespace Server.Mobiles
     public partial class Chocobo : BaseMount
     {
         public override string DefaultName => "a yellow chocobo";
-
+        private const int m_minStr = 100;
+        private const int m_maxStr = 300;
+        private const double m_aboveMinMax = m_maxStr - m_minStr;
+        private const double m_tamingSkillBase = 67.1;
+        private const double m_tamingSkillMaxDelta = 30;
         [Constructible]
         public Chocobo() : base(0xDA, 0x3EA4, AIType.AI_Animal)
         {
@@ -15,12 +20,12 @@ namespace Server.Mobiles
 
             BaseSoundID = 0x4B0;
 
-            SetStr(100, 300);
+            SetStr(m_minStr, m_maxStr);
             SetDex(200, 255);
             SetInt(100, 150);
 
             SetHits(150, 400);
-            
+
             SetDamage(10, 25);
 
             SetDamageType(ResistanceType.Physical, 50);
@@ -28,7 +33,7 @@ namespace Server.Mobiles
 
             SetResistance(ResistanceType.Physical, 25, 30);
             SetResistance(ResistanceType.Fire, 50, 75);
-			SetResistance(ResistanceType.Cold, 20, 30);
+            SetResistance(ResistanceType.Cold, 20, 30);
             SetResistance(ResistanceType.Poison, 50, 75);
             SetResistance(ResistanceType.Energy, 20, 30);
 
@@ -40,10 +45,16 @@ namespace Server.Mobiles
             Karma = 1500;
 
             Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 97.1;
-			
-			PackItem(new BrightlyColoredEggs());
+            ControlSlots = RawStr <= 200 ? 1 : 2;
+            MinTameSkill = Math.Round(GetTamingSkillBasedOnStrength(), 1);
+
+            PackItem(new BrightlyColoredEggs());
+        }
+
+        private double GetTamingSkillBasedOnStrength()
+        {
+            double aboveMin = RawStr - m_minStr;
+            return m_tamingSkillBase + (m_tamingSkillMaxDelta * (aboveMin / m_aboveMinMax));
         }
 
         public override int StepsMax => 6400;
