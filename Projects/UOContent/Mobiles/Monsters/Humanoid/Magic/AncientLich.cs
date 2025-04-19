@@ -70,6 +70,7 @@ namespace Server.Mobiles
         {
             AddLoot(LootPack.FilthyRich, 3);
             AddLoot(LootPack.MedScrolls, 2);
+            AddLoot(LootPack.SoulPhylacteries10Pct);
         }
 
         private static MonsterAbility[] _abilities = { MonsterAbilities.SummonLesserUndeadCounter };

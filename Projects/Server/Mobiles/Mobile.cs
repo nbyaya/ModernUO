@@ -2035,7 +2035,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
     ///     Overridable. Gets the maximum hit point of the Mobile. By default, this returns: <c>50 + (<see cref="Str" /> / 2)</c>
     /// </summary>
     [CommandProperty(AccessLevel.GameMaster)]
-    public virtual int HitsMax => 50 + Str / 2;
+    public virtual int HitsMax => 50 + Str;
 
     /// <summary>
     ///     Gets or sets the current stamina of the Mobile. This value ranges from 0 to <see cref="StamMax" />, inclusive.
@@ -6338,7 +6338,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
 
                     if (version < 3)
                     {
-                        m_StatCap = PlayerStatCap.StatCap;
+                        m_StatCap = PlayerStatAndSkillCapInfo.StatCap;
                     }
 
                     if (version < 15)
@@ -7698,7 +7698,7 @@ public partial class Mobile : IHued, IComparable<Mobile>, ISpawnable, IObjectPro
 
     public void DefaultMobileInit()
     {
-        m_StatCap = PlayerStatCap.StatCap;
+        m_StatCap = PlayerStatAndSkillCapInfo.StatCap;
         m_FollowersMax = 5;
         Skills = new Skills(this);
         Items = new List<Item>();

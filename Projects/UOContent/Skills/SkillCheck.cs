@@ -118,6 +118,8 @@ public static class SkillCheck
 
                 gc *= skill.Info.GainFactor;
 
+                gc *= SkillGainRatios.GetRatioForSkill(skill.SkillName);
+
                 if (gc < 0.01)
                 {
                     gc = 0.01;
