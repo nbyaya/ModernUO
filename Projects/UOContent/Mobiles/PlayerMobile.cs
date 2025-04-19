@@ -551,10 +551,11 @@ namespace Server.Mobiles
                     strBase = Str; // this.Str already includes GetStatOffset/str
                     strOffs = AosAttributes.GetValue(this, AosAttribute.BonusHits);
 
-                    if (Core.ML && strOffs > 25 && AccessLevel <= AccessLevel.Player)
-                    {
-                        strOffs = 25;
-                    }
+                    //We don't want to cap offsets anymore.
+                    //if (Core.ML && strOffs > 25 && AccessLevel <= AccessLevel.Player)
+                    //{
+                    //    strOffs = 25;
+                    //}
 
                     if (AnimalForm.UnderTransformation(this, typeof(BakeKitsune)) ||
                         AnimalForm.UnderTransformation(this, typeof(GreyWolf)))
@@ -567,7 +568,7 @@ namespace Server.Mobiles
                     strBase = RawStr;
                 }
 
-                return strBase / 2 + 50 + strOffs;
+                return strBase + 50 + strOffs;
             }
         }
 
