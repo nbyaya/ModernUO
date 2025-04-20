@@ -46,6 +46,11 @@ namespace Server.Mobiles
 
             Tamable = true;
             ControlSlots = RawStr <= 200 ? 1 : 2;
+            if(ControlSlots == 1)
+            {
+                Hue = 0xAA7;
+                Name = "a pink chocobo";
+            }
             MinTameSkill = Math.Round(GetTamingSkillBasedOnStrength(), 1);
 
             PackItem(new BrightlyColoredEggs());
