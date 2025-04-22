@@ -27,7 +27,7 @@ public partial class SoulPhylactery : Item
     private const int FullHue = 0xABB;
 
     [Constructible]
-    public SoulPhylactery() : base(0x1F1C)
+    public SoulPhylactery() : base(0x99C7)
     {
         Name = "a soul phylactery";
         Hue = EmptyHue;
@@ -76,7 +76,7 @@ public partial class SoulPhylactery : Item
             try
             {
                 bool foundShrine = false;
-                foreach (var item in pm.GetItemsInRange(2))
+                foreach (var item in pm.GetItemsInRange(5))
                 {
                     if (item is IAnkh)
                     {
