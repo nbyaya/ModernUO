@@ -18,7 +18,7 @@ namespace Server.Mobiles
 
         public const int OldSkillsCap = 7000; //value is scaled down by 0.1. 7000=700.0
 
-        public const int IndividualSkillCap = 150;
-        public const int OldIndividualSkillCap = 125;
+        public const int IndividualStatCap = 150;
+        public const int OldIndividualStatCap = 125;
     }
 }

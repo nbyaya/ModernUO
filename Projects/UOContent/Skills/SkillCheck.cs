@@ -21,7 +21,7 @@ public static class SkillCheck
     public static void Configure()
     {
         //_statMax = ServerConfiguration.GetOrUpdateSetting("stats.statMax", Core.LBR ? 125 : 100);
-        _statMax = PlayerStatAndSkillCapInfo.IndividualSkillCap;
+        _statMax = PlayerStatAndSkillCapInfo.IndividualStatCap;
         _statGainChanceMultiplier = ServerConfiguration.GetOrUpdateSetting("stats.gainChanceMultiplier", 1.0);
         _primaryStatGainChance = ServerConfiguration.GetSetting("stats.primaryStatGainChance", 0.75);
         _statGainDelay = ServerConfiguration.GetSetting("stats.gainDelay", TimeSpan.FromMinutes(Core.ML ? 0.05 : 10));
