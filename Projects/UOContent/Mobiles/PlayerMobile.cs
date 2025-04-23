@@ -1267,7 +1267,6 @@ namespace Server.Mobiles
             from.ClaimAutoStabledPets();
             AnimalForm.GetContext(from)?.Timer.Start();
             from.ResendBuffs();
-            StatSkillCapChecks.CheckSkillAndStatCaps(from);
         }
 
         private class ServerLockdownNoticeGump : StaticNoticeGump<ServerLockdownNoticeGump>
