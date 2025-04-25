@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Server.Accounting;
 using Server.Engines.Virtues;
@@ -25,7 +26,71 @@ namespace Server.Commands
         {
             CommandSystem.Register("Sort", AccessLevel.Player, new CommandEventHandler(Sort_OnCommand));
             CommandSystem.Register("SetBag", AccessLevel.Player, new CommandEventHandler(SetBag_OnCommand));
+            CommandSystem.Register("Loot", AccessLevel.Player, new CommandEventHandler(Loot_OnCommand));
         }
+
+        private static void Loot_OnCommand(CommandEventArgs e)
+        {
+            var pm = e.Mobile as PlayerMobile;
+            if (pm == null)
+                return;
+            if (!pm.Alive)
+            {
+                pm.SendMessage(MessageHues.RedErrorHue, "You must be alive to use this command.");
+                return;
+            }
+            InitializeSortBagsAccountCache(pm);
+            var lootBag = m_sortBagsCache[pm.Serial.Value].LootBag;
+            if (lootBag == null) lootBag = pm.Backpack;
+
+            //Task.Run(() => {  //Seems using the Task isn't necessary. Calling directly for now.
+            DoLootPickup(pm, lootBag);
+            //});
+        }
+
+        private static async Task DoLootPickup(PlayerMobile pm, Container lootBag)
+        {
+            if (pm.LootingProcId != 0)
+            {
+                pm.SendMessage(MessageHues.RedErrorHue, "You are already looting.");
+                return;
+            }
+            pm.LootingProcId = 1; //doesn't actually seem to need to be a unique value, so just use 1 for now
+            try
+            {
+                var things = new List<Item>();
+                foreach (var thing in pm.GetItemsInRange(2))
+                {
+                    things.Add(thing);
+                }
+                foreach (var thing in things)
+                {
+                    pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
+                    thing.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, $"Looted by {pm.Name}");
+                    //if (thing is Corpse corpse)
+                    //{
+                    //    if (corpse.Owner == pm)
+                    //    {
+                    //        pm.SendMessage(MessageHues.GreenNoticeHue, "Looting corpse.");
+                    //        corpse.Loot(pm, lootBag);
+                    //        await Task.Delay(1000);
+                    //    }
+                    //}
+                    //else if (thing is Item item && item.Parent == null && item.Visible)
+                    //{
+                    //    pm.SendMessage(MessageHues.GreenNoticeHue, "Looting item.");
+                    //    item.MoveToWorld(pm.Location, pm.Map);
+                    //    await Task.Delay(1000);
+                    //}
+                    await Task.Delay(1000);
+                }
+            }
+            finally
+            {
+                pm.LootingProcId = 0;
+            }
+        }
+
         private static bool CheckContainerMoves(PlayerMobile pm, Container containerToSearch, Container reagentBag, Container resourceBag, bool movedAny, bool doAll)
         {
             try
@@ -87,7 +152,7 @@ namespace Server.Commands
                 ||
                 CommodityResources.IsNonCommodityResource(item);
         }
-        
+
         [Usage("SetBag [reagent|resource|clear]")]
         [Description("Sets the bag to be used for sorting Reagents or Resources. Must be in your main backpack.")]
         private static void SetBag_OnCommand(CommandEventArgs e)
@@ -357,5 +422,13 @@ namespace Server.Commands
                 }
             }
         }
+    }
+}
+
+namespace Server.Mobiles
+{
+    public partial class PlayerMobile
+    {
+        public int LootingProcId { get; set; }
     }
 }
