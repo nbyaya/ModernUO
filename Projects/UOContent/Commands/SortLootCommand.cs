@@ -40,15 +40,13 @@ namespace Server.Commands
                 return;
             }
             InitializeSortBagsAccountCache(pm);
-            var lootBag = m_sortBagsCache[pm.Serial.Value].LootBag;
-            if (lootBag == null) lootBag = pm.Backpack;
 
             //Task.Run(() => {  //Seems using the Task isn't necessary. Calling directly for now.
-            DoLootPickup(pm, lootBag);
+            DoLootPickup(pm);
             //});
         }
 
-        private static async Task DoLootPickup(PlayerMobile pm, Container lootBag)
+        private static async Task DoLootPickup(PlayerMobile pm)
         {
             if (pm.LootingProcId != 0)
             {
@@ -56,6 +54,12 @@ namespace Server.Commands
                 return;
             }
             pm.LootingProcId = 1; //doesn't actually seem to need to be a unique value, so just use 1 for now
+            var lootBag = m_sortBagsCache[pm.Serial.Value].LootBag;
+            if (lootBag == null || (lootBag != pm.Backpack && lootBag.Parent != pm.Backpack)) lootBag = pm.Backpack;
+            var reagentBag = m_sortBagsCache[pm.Serial.Value].ReagentBag;
+            if (reagentBag == null || (reagentBag != pm.Backpack && reagentBag.Parent != pm.Backpack)) reagentBag = lootBag;
+            var resourceBag = m_sortBagsCache[pm.Serial.Value].ResourceBag;
+            if (resourceBag == null || (resourceBag != pm.Backpack && resourceBag.Parent != pm.Backpack)) resourceBag = lootBag;
             try
             {
                 var things = new List<Item>();
@@ -65,29 +69,80 @@ namespace Server.Commands
                 }
                 foreach (var thing in things)
                 {
-                    pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
-                    thing.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, $"Looted by {pm.Name}");
-                    //if (thing is Corpse corpse)
-                    //{
-                    //    if (corpse.Owner == pm)
-                    //    {
-                    //        pm.SendMessage(MessageHues.GreenNoticeHue, "Looting corpse.");
-                    //        corpse.Loot(pm, lootBag);
-                    //        await Task.Delay(1000);
-                    //    }
-                    //}
-                    //else if (thing is Item item && item.Parent == null && item.Visible)
-                    //{
-                    //    pm.SendMessage(MessageHues.GreenNoticeHue, "Looting item.");
-                    //    item.MoveToWorld(pm.Location, pm.Map);
-                    //    await Task.Delay(1000);
-                    //}
-                    await Task.Delay(1000);
+                    if (thing is Corpse corpse)
+                    {
+                        foreach (var item in corpse.Items.ToList())
+                        {
+                            if (CanLootItem(pm, item, corpse))
+                            {
+                                if (item is BaseReagent)
+                                {
+                                    TryToMoveItemToBag(item, reagentBag);
+                                }
+                                else if (ItemIsResourceItem(item))
+                                {
+                                    TryToMoveItemToBag(item, resourceBag);
+                                }
+                                else
+                                {
+                                    TryToMoveItemToBag(item, lootBag);
+                                }
+                                pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
+                                await Task.Delay(1000);
+                            }
+                        }
+                    }
+                    else if (thing is Item item && item.Parent == null && item.Visible)
+                    {
+                        if (CanLootItem(pm, item))
+                        {
+                            if (item is BaseReagent)
+                            {
+                                TryToMoveItemToBag(item, reagentBag);
+                            }
+                            else if (ItemIsResourceItem(item))
+                            {
+                                TryToMoveItemToBag(item, resourceBag);
+                            }
+                            else
+                            {
+                                TryToMoveItemToBag(item, lootBag);
+                            }
+                            pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
+                            await Task.Delay(1000);
+                        }
+                    }
                 }
             }
             finally
             {
                 pm.LootingProcId = 0;
+            }
+        }
+
+        private static bool CanLootItem(PlayerMobile pm, Item item, Corpse corpse = null)
+        {
+            if (corpse == null)
+            {
+                return
+                    pm.CanSee(item)
+                    && (item.Parent == null)
+                    && item.Visible
+                    && item.Movable
+                    && !item.IsLockedDown
+                    && !item.IsSecure
+                    && !item.Deleted;
+            }
+            else
+            {
+                return
+                    pm.CanSee(corpse)
+                    && item.Parent == corpse
+                    && item.Visible
+                    && item.Movable
+                    && !item.IsLockedDown
+                    && !item.IsSecure
+                    && !item.Deleted;
             }
         }
 
@@ -250,6 +305,12 @@ namespace Server.Commands
         {
             if (item == null || bag == null || item.Amount <= 0)
                 return;
+
+            if (!item.Stackable)
+            {
+                bag.DropItem(item);
+                return;
+            }
 
             int remainingAmount = item.Amount;
             List<Item> existingStacks = new List<Item>();
