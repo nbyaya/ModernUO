@@ -16,6 +16,12 @@ namespace Server.Commands.Maint
         private static bool maintHasRun = false;
         private static readonly string LogFilePath = Path.Combine("Logs", "RuccisCommandsMaintLog.txt");
         private static object maintLock = new object();
+
+        public static void Initialize()
+        {
+            RunMaint();
+        }
+
         public static void RunMaint()
         {
             lock (maintLock)
