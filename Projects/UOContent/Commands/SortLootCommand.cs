@@ -136,7 +136,8 @@ namespace Server.Commands
             else
             {
                 return
-                    pm.CanSee(corpse)
+                    !corpse.Deleted
+                    && pm.CanSee(corpse)
                     && item.Parent == corpse
                     && item.Visible
                     && item.Movable
@@ -192,7 +193,6 @@ namespace Server.Commands
 
         private static void InitializeSortBagsAccountCache(PlayerMobile pm)
         {
-            Maint.RuccisCommandMaint.RunMaint();
             if (m_sortBagsCache.ContainsKey(pm.Serial.Value)) return;
             var account = pm.Account as Account;
             if (account == null) return;
@@ -208,8 +208,8 @@ namespace Server.Commands
                 CommodityResources.IsNonCommodityResource(item);
         }
 
-        [Usage("SetBag [reagent|resource|clear]")]
-        [Description("Sets the bag to be used for sorting Reagents or Resources. Must be in your main backpack.")]
+        [Usage("SetBag [reagent|resource|loot]")]
+        [Description("Sets the bag to be used for looting or for sorting Reagents or Resources. Must be in your main backpack.")]
         private static void SetBag_OnCommand(CommandEventArgs e)
         {
             var pm = e.Mobile as PlayerMobile;
@@ -221,7 +221,7 @@ namespace Server.Commands
             ValidateBagKind(ref kind, ref validBagKind);
             if (!validBagKind)
             {
-                pm.SendMessage(MessageHues.RedErrorHue, $"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'clear'.");
+                pm.SendMessage(MessageHues.RedErrorHue, $"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'loot'.");
             }
             else if (kind == Text_Clear)
             {
@@ -289,15 +289,7 @@ namespace Server.Commands
             }
             catch (Exception ex)
             {
-                if (pm.AccessLevel > AccessLevel.Player)
-                {
-                    pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
-                }
-                else
-                {
-                    pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
-                    //pm.SendMessage("An error occurred while sorting items.");
-                }
+                pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
             }
         }
 
@@ -375,6 +367,7 @@ namespace Server.Commands
                 validBagKind = false;
             }
         }
+
         public class SortBags
         {
             public SortBags(Container reagentBag, Container resourceBag, Container lootBag = null)
