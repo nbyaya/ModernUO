@@ -9,70 +9,6 @@ using Server.Mobiles;
 
 namespace Server.Commands;
 
-public class CharacterWeaponSets
-{
-    private Dictionary<int, WeaponPair> m_weaponSets = new Dictionary<int, WeaponPair>();
-
-    public WeaponPair this[int index]
-    {
-        get
-        {
-            if (index > 9 || index < 0) throw new ArgumentOutOfRangeException("index", "Index must be between 0 and 9.");
-            if (m_weaponSets.ContainsKey(index))
-                return m_weaponSets[index];
-            return null;
-        }
-        set
-        {
-            if (index > 9 || index < 0) throw new ArgumentOutOfRangeException("index", "Index must be between 0 and 9.");
-            if (m_weaponSets.ContainsKey(index))
-                m_weaponSets[index] = value;
-            else
-                m_weaponSets.Add(index, value);
-        }
-    }
-}
-
-public class WeaponPair
-{
-    public WeaponPair(Item? oneHanded, Item? twoHanded)
-    {
-        OneHanded = oneHanded;
-        TwoHanded = twoHanded;
-    }
-
-    public WeaponPair(string serializedString)
-    {
-        if (string.IsNullOrWhiteSpace(serializedString))
-            return;
-
-        string[] parts = serializedString.Split('|');
-        if (parts.Length > 2)
-            throw new FormatException("Invalid input format. Expected format: \"12345|987234\".");
-        uint first = 0;
-        uint second = 0;
-        if (uint.TryParse(parts[0], out first))
-        {
-            try { OneHanded = World.FindItem((Serial)first, false); }
-            catch { OneHanded = null; }
-        }
-        if (uint.TryParse(parts[1], out second))
-        {
-            try { TwoHanded = World.FindItem((Serial)second, false); }
-            catch { TwoHanded = null; }
-        }
-    }
-
-    public Item? OneHanded { get; set; } = null;
-
-    public Item? TwoHanded { get; set; } = null;
-
-    public string Serialize()
-    {
-        return (OneHanded?.Serial.Value ?? 0) + "|" + (TwoHanded?.Serial.Value ?? 0);
-    }
-}
-
 public static class EquipCommand
 {
 
@@ -217,3 +153,67 @@ public static class EquipCommand
     }
 
 }
+public class CharacterWeaponSets
+{
+    private Dictionary<int, WeaponPair> m_weaponSets = new Dictionary<int, WeaponPair>();
+
+    public WeaponPair this[int index]
+    {
+        get
+        {
+            if (index > 9 || index < 0) throw new ArgumentOutOfRangeException("index", "Index must be between 0 and 9.");
+            if (m_weaponSets.ContainsKey(index))
+                return m_weaponSets[index];
+            return null;
+        }
+        set
+        {
+            if (index > 9 || index < 0) throw new ArgumentOutOfRangeException("index", "Index must be between 0 and 9.");
+            if (m_weaponSets.ContainsKey(index))
+                m_weaponSets[index] = value;
+            else
+                m_weaponSets.Add(index, value);
+        }
+    }
+}
+
+public class WeaponPair
+{
+    public WeaponPair(Item? oneHanded, Item? twoHanded)
+    {
+        OneHanded = oneHanded;
+        TwoHanded = twoHanded;
+    }
+
+    public WeaponPair(string serializedString)
+    {
+        if (string.IsNullOrWhiteSpace(serializedString))
+            return;
+
+        string[] parts = serializedString.Split('|');
+        if (parts.Length > 2)
+            throw new FormatException("Invalid input format. Expected format: \"12345|987234\".");
+        uint first = 0;
+        uint second = 0;
+        if (uint.TryParse(parts[0], out first))
+        {
+            try { OneHanded = World.FindItem((Serial)first, false); }
+            catch { OneHanded = null; }
+        }
+        if (uint.TryParse(parts[1], out second))
+        {
+            try { TwoHanded = World.FindItem((Serial)second, false); }
+            catch { TwoHanded = null; }
+        }
+    }
+
+    public Item? OneHanded { get; set; } = null;
+
+    public Item? TwoHanded { get; set; } = null;
+
+    public string Serialize()
+    {
+        return (OneHanded?.Serial.Value ?? 0) + "|" + (TwoHanded?.Serial.Value ?? 0);
+    }
+}
+
