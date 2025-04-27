@@ -163,7 +163,7 @@ namespace Server.Commands
                     {
                         if (item is BaseReagent)
                         {
-                            TryToMoveItemToBag(item, reagentBag);
+                            TryToMoveItemToBag(pm, item, reagentBag);
                             movedAny = true;
                             continue;
                         }
@@ -172,7 +172,7 @@ namespace Server.Commands
                     {
                         if (ItemIsResourceItem(item))
                         {
-                            TryToMoveItemToBag(item, resourceBag);
+                            TryToMoveItemToBag(pm, item, resourceBag);
                             movedAny = true;
                             continue;
                         }
