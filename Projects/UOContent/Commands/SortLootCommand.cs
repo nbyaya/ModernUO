@@ -77,15 +77,15 @@ namespace Server.Commands
                             {
                                 if (item is BaseReagent)
                                 {
-                                    TryToMoveItemToBag(item, reagentBag);
+                                    TryToMoveItemToBag(pm, item, reagentBag);
                                 }
                                 else if (ItemIsResourceItem(item))
                                 {
-                                    TryToMoveItemToBag(item, resourceBag);
+                                    TryToMoveItemToBag(pm, item, resourceBag);
                                 }
                                 else
                                 {
-                                    TryToMoveItemToBag(item, lootBag);
+                                    TryToMoveItemToBag(pm, item, lootBag);
                                 }
                                 pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
                                 await Task.Delay(1000);
@@ -98,15 +98,15 @@ namespace Server.Commands
                         {
                             if (item is BaseReagent)
                             {
-                                TryToMoveItemToBag(item, reagentBag);
+                                TryToMoveItemToBag(pm, item, reagentBag);
                             }
                             else if (ItemIsResourceItem(item))
                             {
-                                TryToMoveItemToBag(item, resourceBag);
+                                TryToMoveItemToBag(pm, item, resourceBag);
                             }
                             else
                             {
-                                TryToMoveItemToBag(item, lootBag);
+                                TryToMoveItemToBag(pm, item, lootBag);
                             }
                             pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
                             await Task.Delay(1000);
@@ -293,7 +293,7 @@ namespace Server.Commands
             }
         }
 
-        private static void TryToMoveItemToBag(Item item, Container bag)
+        private static void TryToMoveItemToBag(PlayerMobile pm, Item item, Container bag)
         {
             if (item == null || bag == null || item.Amount <= 0)
                 return;
@@ -301,6 +301,7 @@ namespace Server.Commands
             if (!item.Stackable)
             {
                 bag.DropItem(item);
+                pm?.PlaySound(0x48);
                 return;
             }
 
@@ -329,6 +330,7 @@ namespace Server.Commands
                     if (remainingAmount <= 0)
                     {
                         item.Delete(); // Remove original item if fully moved
+                        pm?.PlaySound(0x48);
                         return;
                     }
                 }
