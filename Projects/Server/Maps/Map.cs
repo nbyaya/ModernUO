@@ -35,7 +35,7 @@ public enum MapRules
     BeneficialRestrictions = 0x0004, // Disallow performing beneficial actions on criminals/murderers
     HarmfulRestrictions = 0x0008,    // Disallow performing harmful actions on innocents
     TrammelRules = FreeMovement | BeneficialRestrictions | HarmfulRestrictions,
-    FeluccaRules = None
+    FeluccaRules = FreeMovement
 }
 
 public sealed partial class Map : IComparable<Map>, ISpanFormattable, ISpanParsable<Map>
