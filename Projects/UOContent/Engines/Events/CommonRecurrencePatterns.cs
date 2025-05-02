@@ -8,7 +8,13 @@ public class HourlyRecurrencePattern : IRecurrencePattern
 
     public HourlyRecurrencePattern(int intervalHours = 1) => IntervalHours = Math.Max(1, intervalHours);
 
-    public DateTime GetNextOccurrence(DateTime afterUtc, TimeZoneInfo timeZone) => afterUtc.AddHours(IntervalHours);
+    public DateTime GetNextOccurrence(DateTime afterUtc, TimeOnly time, TimeZoneInfo timeZone)
+    {
+        var local = TimeZoneInfo.ConvertTimeFromUtc(afterUtc, timeZone);
+        return new DateTime(local.Year, local.Month, local.Day, local.Hour, time.Minute, 0)
+            .LocalToUtc(timeZone)
+            .AddHours(IntervalHours);
+    }
 }
 
 public class DailyRecurrencePattern : IRecurrencePattern
@@ -17,7 +23,13 @@ public class DailyRecurrencePattern : IRecurrencePattern
 
     public DailyRecurrencePattern(int intervalDays = 1) => IntervalDays = Math.Max(1, intervalDays);
 
-    public DateTime GetNextOccurrence(DateTime afterUtc, TimeZoneInfo timeZone) => afterUtc.AddDays(IntervalDays);
+    public DateTime GetNextOccurrence(DateTime afterUtc, TimeOnly time, TimeZoneInfo timeZone)
+    {
+        var local = TimeZoneInfo.ConvertTimeFromUtc(afterUtc, timeZone);
+        return new DateTime(local.Year, local.Month, local.Day, time.Hour, time.Minute, 0)
+            .LocalToUtc(timeZone)
+            .AddDays(IntervalDays);
+    }
 }
 
 public class WeeklyRecurrencePattern : IRecurrencePattern
@@ -31,29 +43,32 @@ public class WeeklyRecurrencePattern : IRecurrencePattern
         DaysOfWeek = daysOfWeek;
     }
 
-    public DateTime GetNextOccurrence(DateTime afterUtc, TimeZoneInfo timeZone)
+    public DateTime GetNextOccurrence(DateTime afterUtc, TimeOnly time, TimeZoneInfo timeZone)
     {
         var local = TimeZoneInfo.ConvertTimeFromUtc(afterUtc, timeZone);
-        var weekStart = local.Date.AddDays(1);
-        var daysOfWeek = DaysOfWeek;
+        var daysOfWeek = DaysOfWeek == DaysOfWeek.None
+            ? (DaysOfWeek)(1 << (int)local.DayOfWeek)
+            : DaysOfWeek;
 
-        // Set the day of the week to whatever day it is now
-        if (daysOfWeek == DaysOfWeek.None)
+        var weekStart = local.Date.AddDays(-(int)local.DayOfWeek);
+
+        // No more days in this week, jump IntervalWeeks ahead
+        for (int week = 0; week <= 100; week++)
         {
-            daysOfWeek = (DaysOfWeek)(1 << (int)local.DayOfWeek);
-        }
+            DateTime nextWeekStart = weekStart.AddDays(7 * IntervalWeeks * week);
 
-        // Example:
-        // Recurrence is Monday, Wednesday, Friday - and today is Wednesday
-        // weekStart will be Thursday, and then we check every day for 7 days to find the next occurrence match.
-        for (int i = 0; i < 7; i++)
-        {
-            var candidate = weekStart.AddDays(i);
-            var candidateDay = (DaysOfWeek)(1 << (int)candidate.DayOfWeek);
-
-            if ((daysOfWeek & candidateDay) != 0 && candidate > local && !timeZone.IsInvalidTime(candidate))
+            for (int i = 0; i < 7; i++)
             {
-                return candidate.LocalToUtc(timeZone);
+                var day = nextWeekStart.AddDays(i);
+                var dayOfWeekFlag = (DaysOfWeek)(1 << (int)day.DayOfWeek);
+                if ((daysOfWeek & dayOfWeekFlag) != 0)
+                {
+                    var candidate = new DateTime(day.Year, day.Month, day.Day, time.Hour, time.Minute, 0);
+                    if (candidate > local && !timeZone.IsInvalidTime(candidate))
+                    {
+                        return candidate.LocalToUtc(timeZone);
+                    }
+                }
             }
         }
 
@@ -72,12 +87,11 @@ public class MonthlyRecurrencePattern : IRecurrencePattern
         IntervalMonths = Math.Max(1, intervalMonths);
     }
 
-    public DateTime GetNextOccurrence(DateTime afterUtc, TimeZoneInfo timeZone)
+    public DateTime GetNextOccurrence(DateTime afterUtc, TimeOnly time, TimeZoneInfo timeZone)
     {
         var local = TimeZoneInfo.ConvertTimeFromUtc(afterUtc, timeZone);
         var year = local.Year;
         var month = local.Month;
-        var time = local.TimeOfDay;
         var day = DayOfMonth == -1 ? local.Day : DayOfMonth;
 
         for (int i = 0; i < 100; i++)
@@ -86,7 +100,7 @@ public class MonthlyRecurrencePattern : IRecurrencePattern
             var candidate = new DateTime(year, 1, 1)
                 .AddMonths(nextMonth - 1)
                 .AddDays(day - 1)
-                .Add(time);
+                .Add(time.ToTimeSpan());
 
             // Some months may not have that day of the month, if not, we skip to the next interval
             if (candidate > local && candidate.Day == day && !timeZone.IsInvalidTime(candidate))
@@ -112,7 +126,7 @@ public class MonthlyOrdinalRecurrencePattern : IRecurrencePattern
         DayOfWeek = dayOfWeek;
     }
 
-    public DateTime GetNextOccurrence(DateTime afterUtc, TimeZoneInfo timeZone)
+    public DateTime GetNextOccurrence(DateTime afterUtc, TimeOnly time, TimeZoneInfo timeZone)
     {
         var local = TimeZoneInfo.ConvertTimeFromUtc(afterUtc, timeZone);
         var year = local.Year;
@@ -129,7 +143,8 @@ public class MonthlyOrdinalRecurrencePattern : IRecurrencePattern
             if (Ordinal >= OrdinalDayOccurrence.First)
             {
                 // Find the first day of the month
-                var firstOfMonth = new DateTime(candidateYear, candidateMonth, 1, local.Hour, local.Minute, local.Second);
+                var firstOfMonth = new DateTime(candidateYear, candidateMonth, 1)
+                    .Add(time.ToTimeSpan());
 
                 // Find the first occurrence of the desired day
                 int daysOffset = ((int)DayOfWeek - (int)firstOfMonth.DayOfWeek + 7) % 7;
@@ -149,7 +164,8 @@ public class MonthlyOrdinalRecurrencePattern : IRecurrencePattern
             {
                 // Find the last day of the month
                 var daysInMonth = DateTime.DaysInMonth(candidateYear, candidateMonth);
-                var lastOfMonth = new DateTime(candidateYear, candidateMonth, daysInMonth, local.Hour, local.Minute, local.Second);
+                var lastOfMonth = new DateTime(candidateYear, candidateMonth, daysInMonth)
+                    .Add(time.ToTimeSpan());
 
                 // Find the last occurrence of the desired day
                 int daysOffset = (int)lastOfMonth.DayOfWeek - (int)DayOfWeek + 7;

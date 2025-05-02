@@ -4946,7 +4946,7 @@ namespace Server.Mobiles
         {
             if (Backpack?.Items.Count > 0)
             {
-                Backpack b = new CreatureBackpack(Name);
+                var b = new CreatureBackpack(Name);
 
                 var list = new List<Item>(Backpack.Items);
                 foreach (var item in list)
