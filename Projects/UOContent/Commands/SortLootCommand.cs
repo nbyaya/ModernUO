@@ -298,47 +298,63 @@ namespace Server.Commands
             if (item == null || bag == null || item.Amount <= 0)
                 return;
 
-            if (!item.Stackable)
+            try
             {
-                bag.DropItem(item);
-                pm?.PlaySound(0x48);
-                return;
-            }
-
-            int remainingAmount = item.Amount;
-            List<Item> existingStacks = new List<Item>();
-
-            // Find existing stacks of the same item type in the bag
-            foreach (Item i in bag.Items)
-            {
-                if (i.GetType() == item.GetType() && i.Amount < maxStackAmount)
+                if (!item.Stackable)
                 {
-                    existingStacks.Add(i);
+                    CheckIfBagIsFull(pm, item, bag);
+                    bag.DropItem(item);
+                    pm?.PlaySound(0x48);
+                    return;
                 }
-            }
 
-            // Try merging into existing stacks first
-            foreach (Item stack in existingStacks)
-            {
-                int spaceLeft = maxStackAmount - stack.Amount;
-                if (spaceLeft > 0)
+                int remainingAmount = item.Amount;
+                List<Item> existingStacks = new List<Item>();
+
+                // Find existing stacks of the same item type in the bag
+                foreach (Item i in bag.Items)
                 {
-                    int toMove = Math.Min(spaceLeft, remainingAmount);
-                    stack.Amount += toMove;
-                    remainingAmount -= toMove;
-
-                    if (remainingAmount <= 0)
+                    if (i.GetType() == item.GetType() && i.Amount < maxStackAmount)
                     {
-                        item.Delete(); // Remove original item if fully moved
-                        pm?.PlaySound(0x48);
-                        return;
+                        existingStacks.Add(i);
                     }
                 }
-            }
+                // Try merging into existing stacks first
+                foreach (Item stack in existingStacks)
+                {
+                    int spaceLeft = maxStackAmount - stack.Amount;
+                    if (spaceLeft > 0)
+                    {
+                        int toMove = Math.Min(spaceLeft, remainingAmount);
+                        stack.Amount += toMove;
+                        remainingAmount -= toMove;
 
-            if ((item.Amount = remainingAmount) > 0)
+                        if (remainingAmount <= 0)
+                        {
+                            item.Delete(); // Remove original item if fully moved
+                            pm?.PlaySound(0x48);
+                            return;
+                        }
+                    }
+                }
+
+                if ((item.Amount = remainingAmount) > 0)
+                {
+                    CheckIfBagIsFull(pm, item, bag);
+                    bag.DropItem(item);
+                }
+            }
+            catch (ContainerIsFullException)
             {
-                bag.DropItem(item);
+                pm.SendMessage(MessageHues.RedErrorHue, "The container you are trying to put this in is full.");
+            }
+        }
+
+        private static void CheckIfBagIsFull(PlayerMobile pm, Item item, Container bag)
+        {
+            if (bag.Items.Count >= bag.MaxItems)
+            {
+                throw new ContainerIsFullException("");
             }
         }
 
@@ -477,6 +493,13 @@ namespace Server.Commands
                     pm.SendMessage(MessageHues.RedErrorHue, $"Error setting bag: {ex.Message}");
                 }
             }
+        }
+    }
+
+    public class ContainerIsFullException : Exception
+    {
+        public ContainerIsFullException(string message) : base(message)
+        {
         }
     }
 }
