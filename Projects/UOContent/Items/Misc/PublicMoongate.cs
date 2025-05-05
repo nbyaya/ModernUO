@@ -284,18 +284,18 @@ public class PMList
         );
 
     public static PMList[] NoTrammelLists = { Felucca };
-    public static PMList[] T2ALists = { Trammel, Felucca };
-    public static PMList[] T2AListsYoung = { Trammel };
-    public static PMList[] LBRLists = { Trammel, Felucca, Ilshenar };
-    public static PMList[] LBRListsYoung = { Trammel, Ilshenar };
-    public static PMList[] AOSLists = { Trammel, Felucca, Ilshenar, Malas };
-    public static PMList[] AOSListsYoung = { Trammel, Ilshenar, Malas };
-    public static PMList[] SELists = { Trammel, Felucca, Ilshenar, Malas, Tokuno };
-    public static PMList[] SEListsYoung = { Trammel, Ilshenar, Malas, Tokuno };
-    public static PMList[] SALists = { Trammel, Felucca, Ilshenar, Malas, Tokuno, TerMur };
-    public static PMList[] SAListsYoung = { Trammel, Ilshenar, Malas, Tokuno, TerMur };
-    public static PMList[] TOLLists = { Trammel, Felucca, Ilshenar, Malas, Tokuno, TerMurEodon };
-    public static PMList[] TOLListsYoung = { Trammel, Ilshenar, Malas, Tokuno, TerMurEodon };
+    public static PMList[] T2ALists = { Felucca };
+    public static PMList[] T2AListsYoung = {  };
+    public static PMList[] LBRLists = { Felucca, Ilshenar };
+    public static PMList[] LBRListsYoung = { Ilshenar };
+    public static PMList[] AOSLists = { Felucca, Ilshenar, Malas };
+    public static PMList[] AOSListsYoung = { Ilshenar, Malas };
+    public static PMList[] SELists = { Felucca, Ilshenar, Malas, Tokuno };
+    public static PMList[] SEListsYoung = { Ilshenar, Malas, Tokuno };
+    public static PMList[] SALists = { Felucca, Ilshenar, Malas, Tokuno, TerMur };
+    public static PMList[] SAListsYoung = { Ilshenar, Malas, Tokuno, TerMur };
+    public static PMList[] TOLLists = { Felucca, Ilshenar, Malas, Tokuno, TerMurEodon };
+    public static PMList[] TOLListsYoung = { Ilshenar, Malas, Tokuno, TerMurEodon };
     public static PMList[] RedLists = { Felucca };
     public static PMList[] SigilLists = { Felucca };
 
