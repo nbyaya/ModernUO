@@ -116,6 +116,7 @@ namespace Server.Commands
             }
             finally
             {
+                pm.SendMessage(MessageHues.WhiteNoticeHue, "Looting complete.");
                 pm.LootingProcId = 0;
             }
         }
