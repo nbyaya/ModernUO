@@ -9,6 +9,7 @@ using Server.Accounting;
 using Server.Engines.Virtues;
 using Server.Items;
 using Server.Mobiles;
+using Server.Random;
 using Server.Targeting;
 
 namespace Server.Commands
@@ -53,6 +54,7 @@ namespace Server.Commands
                 pm.SendMessage(MessageHues.RedErrorHue, "You are already looting.");
                 return;
             }
+            int delay = pm.AccessLevel >= AccessLevel.GameMaster ? 10 : 1000;
             pm.LootingProcId = 1; //doesn't actually seem to need to be a unique value, so just use 1 for now
             var lootBag = m_sortBagsCache[pm.Serial.Value].LootBag;
             if (lootBag == null || (lootBag != pm.Backpack && lootBag.Parent != pm.Backpack)) lootBag = pm.Backpack;
@@ -87,8 +89,8 @@ namespace Server.Commands
                                 {
                                     TryToMoveItemToBag(pm, item, lootBag);
                                 }
-                                pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
-                                await Task.Delay(1000);
+                                pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, GetSnarfWord());
+                                await Task.Delay(delay);
                             }
                         }
                     }
@@ -108,8 +110,8 @@ namespace Server.Commands
                             {
                                 TryToMoveItemToBag(pm, item, lootBag);
                             }
-                            pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, "*yoink*");
-                            await Task.Delay(1000);
+                            pm.PublicOverheadMessage(MessageType.Regular, MessageHues.GreenNoticeHue, false, GetSnarfWord());
+                            await Task.Delay(delay);
                         }
                     }
                 }
@@ -117,8 +119,22 @@ namespace Server.Commands
             finally
             {
                 pm.SendMessage(MessageHues.WhiteNoticeHue, "Looting complete.");
+                pm.PlaySound(0x48);
                 pm.LootingProcId = 0;
             }
+        }
+
+        private static List<WeightedValue<string>> snarfWordsWeighted = new()
+        {
+            new WeightedValue<string>(15, "yoink"),
+            new WeightedValue<string>(1, "snatch"),
+            new WeightedValue<string>(5, "snarf"),
+            new WeightedValue<string>(1, "pluck"),
+            new WeightedValue<string>(1, "tweeze")
+        };
+        private static string GetSnarfWord()
+        {
+            return $"*{Utility.RandomWeightedElement(snarfWordsWeighted).Value}*";
         }
 
         private static bool CanLootItem(PlayerMobile pm, Item item, Corpse corpse = null)
@@ -303,7 +319,7 @@ namespace Server.Commands
             {
                 if (!item.Stackable)
                 {
-                    CheckIfBagIsFull(pm, item, bag);
+                    CheckIfBagIsFull(bag);
                     bag.DropItem(item);
                     pm?.PlaySound(0x48);
                     return;
@@ -341,7 +357,7 @@ namespace Server.Commands
 
                 if ((item.Amount = remainingAmount) > 0)
                 {
-                    CheckIfBagIsFull(pm, item, bag);
+                    CheckIfBagIsFull(bag);
                     bag.DropItem(item);
                 }
             }
@@ -351,7 +367,7 @@ namespace Server.Commands
             }
         }
 
-        private static void CheckIfBagIsFull(PlayerMobile pm, Item item, Container bag)
+        private static void CheckIfBagIsFull(Container bag)
         {
             if (bag.Items.Count >= bag.MaxItems)
             {
