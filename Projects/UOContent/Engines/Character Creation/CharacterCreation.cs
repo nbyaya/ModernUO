@@ -128,33 +128,34 @@ public static partial class CharacterCreation
 
     private static CityInfo[] ConstructAvailableStartingCities()
     {
-        var pre6000ClientSupport = TileMatrix.Pre6000ClientSupport;
-        var availableMaps = ExpansionInfo.CoreExpansion.MapSelectionFlags;
-        var trammelAvailable = availableMaps.Includes(MapSelectionFlags.Trammel);
-        var terMerAvailable = availableMaps.Includes(MapSelectionFlags.TerMur);
+        return FeluccaStartingCities;
+        //var pre6000ClientSupport = TileMatrix.Pre6000ClientSupport;
+        //var availableMaps = ExpansionInfo.CoreExpansion.MapSelectionFlags;
+        //var trammelAvailable = availableMaps.Includes(MapSelectionFlags.Trammel);
+        //var terMerAvailable = availableMaps.Includes(MapSelectionFlags.TerMur);
 
-        if (trammelAvailable)
-        {
-            if (pre6000ClientSupport)
-            {
-                return [..OldHavenStartingCities, ..TrammelStartingCities];
-            }
+        //if (trammelAvailable)
+        //{
+        //    if (pre6000ClientSupport)
+        //    {
+        //        return [..OldHavenStartingCities, ..TrammelStartingCities];
+        //    }
 
-            if (terMerAvailable)
-            {
-                return [..NewHavenStartingCities, ..TrammelStartingCities, ..StartingCitiesSA];
-            }
+        //    if (terMerAvailable)
+        //    {
+        //        return [..NewHavenStartingCities, ..TrammelStartingCities, ..StartingCitiesSA];
+        //    }
 
-            return [..NewHavenStartingCities, ..TrammelStartingCities];
-        }
+        //    return [..NewHavenStartingCities, ..TrammelStartingCities];
+        //}
 
-        if (availableMaps.Includes(MapSelectionFlags.Felucca))
-        {
-            return FeluccaStartingCities;
-        }
+        //if (availableMaps.Includes(MapSelectionFlags.Felucca))
+        //{
+        //    return FeluccaStartingCities;
+        //}
 
-        logger.Error("No starting cities are available.");
-        return [];
+        //logger.Error("No starting cities are available.");
+        //return [];
     }
 
     [GeneratedEvent(nameof(CharacterCreatedEvent))]
