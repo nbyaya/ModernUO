@@ -1,5 +1,6 @@
 using ModernUO.Serialization;
 using Server.Collections;
+using Server.Commands;
 using Server.ContextMenus;
 using Server.Mobiles;
 using Server.Multis;
@@ -132,6 +133,10 @@ public abstract class BaseContainer : Container
 
     public override void OnDoubleClick(Mobile from)
     {
+        if (from is PlayerMobile pm)
+        {
+            this.ShowIfContainerIsASortOrLootBag(pm);
+        }
         if (from.AccessLevel > AccessLevel.Player || from.InRange(GetWorldLocation(), 2) || RootParent is PlayerVendor)
         {
             Open(from);

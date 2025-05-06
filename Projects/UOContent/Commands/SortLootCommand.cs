@@ -30,6 +30,8 @@ namespace Server.Commands
             CommandSystem.Register("Loot", AccessLevel.Player, new CommandEventHandler(Loot_OnCommand));
         }
 
+        [Usage("Loot")]
+        [Description("Grabs nearby items on the ground or in a corpse, placing them in your sort bags one at a time.")]
         private static void Loot_OnCommand(CommandEventArgs e)
         {
             var pm = e.Mobile as PlayerMobile;
@@ -45,6 +47,91 @@ namespace Server.Commands
             //Task.Run(() => {  //Seems using the Task isn't necessary. Calling directly for now.
             DoLootPickup(pm);
             //});
+        }
+
+        [Usage("SetBag [reagent|resource|loot]")]
+        [Description("Sets the bag to be used for looting or for sorting Reagents or Resources. Must be in your main backpack.")]
+        private static void SetBag_OnCommand(CommandEventArgs e)
+        {
+            var pm = e.Mobile as PlayerMobile;
+            if (pm == null)
+                return;
+            InitializeSortBagsAccountCache(pm);
+            var kind = e.ArgString.ToLower().Trim();
+            bool validBagKind = false;
+            ValidateBagKind(ref kind, ref validBagKind);
+            if (!validBagKind)
+            {
+                pm.SendMessage(MessageHues.RedErrorHue, $"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'loot'.");
+            }
+            else if (kind == Text_Clear)
+            {
+                var acct = pm.Account as Account;
+                pm.SendMessage("Cleared sorting bags.");
+                m_sortBagsCache[pm.Serial.Value].ReagentBag = null;
+                m_sortBagsCache[pm.Serial.Value].ResourceBag = null;
+                m_sortBagsCache[pm.Serial.Value].LootBag = null;
+                acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
+            }
+            else
+            {
+                pm.Target = new InternalTarget(kind);
+                pm.SendMessage(MessageHues.YellowNoticeHue, $"Target the {kind} bag you want to use for sorting. It must be in your main backpack.");
+            }
+        }
+
+        [Usage("Sort [all]")]
+        [Description("Sorts the items in your backpack into pre-defined Reagent and Resources bags. Recurses through subpacks with [all] option.")]
+        private static void Sort_OnCommand(CommandEventArgs e)
+        {
+            var pm = e.Mobile as PlayerMobile;
+            if (pm == null)
+                return;
+            bool doAll = e.ArgString.ToLower().Trim().StartsWith("a");
+            try
+            {
+                InitializeSortBagsAccountCache(pm);
+                var reagentBag = m_sortBagsCache[pm.Serial.Value].ReagentBag;
+                var resourceBag = m_sortBagsCache[pm.Serial.Value].ResourceBag;
+                if (reagentBag != null || resourceBag != null)
+                {
+                    if (reagentBag is not null && reagentBag.Parent != pm.Backpack)
+                    {
+                        reagentBag = null;
+                        pm.SendMessage(MessageHues.RedErrorHue, "Not sorting reagents.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Reagent bag must be directly in your main backpack.");
+                    }
+                    if (resourceBag is not null && resourceBag.Parent != pm.Backpack)
+                    {
+                        resourceBag = null;
+                        pm.SendMessage(MessageHues.RedErrorHue, "Not sorting resources.");
+                        pm.SendMessage(MessageHues.RedErrorHue, "Resource bag must be directly in your main backpack.");
+                    }
+                    else
+                    {
+                        bool movedAny = false;
+                        var mainPack = pm.Backpack;
+                        movedAny = CheckContainerMoves(pm, mainPack, reagentBag, resourceBag, movedAny, doAll);
+                        if (movedAny)
+                        {
+                            pm.SendMessage(MessageHues.GreenNoticeHue, "Sorted items into bags.");
+                            pm.PlaySound(0x48);
+                        }
+                        else
+                        {
+                            pm.SendMessage(MessageHues.YellowNoticeHue, "No items to sort.");
+                        }
+                    }
+                }
+                else
+                {
+                    pm.SendMessage(MessageHues.RedErrorHue, "No bags set for sorting. Use [SetBag [reagent|resource] to set the bags.");
+                }
+            }
+            catch (Exception ex)
+            {
+                pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
+            }
         }
 
         private static async Task DoLootPickup(PlayerMobile pm)
@@ -124,14 +211,6 @@ namespace Server.Commands
             }
         }
 
-        private static List<WeightedValue<string>> snarfWordsWeighted = new()
-        {
-            new WeightedValue<string>(15, "yoink"),
-            new WeightedValue<string>(1, "snatch"),
-            new WeightedValue<string>(5, "snarf"),
-            new WeightedValue<string>(1, "pluck"),
-            new WeightedValue<string>(1, "tweeze")
-        };
         private static string GetSnarfWord()
         {
             return $"*{Utility.RandomWeightedElement(snarfWordsWeighted).Value}*";
@@ -225,91 +304,6 @@ namespace Server.Commands
                 CommodityResources.IsNonCommodityResource(item);
         }
 
-        [Usage("SetBag [reagent|resource|loot]")]
-        [Description("Sets the bag to be used for looting or for sorting Reagents or Resources. Must be in your main backpack.")]
-        private static void SetBag_OnCommand(CommandEventArgs e)
-        {
-            var pm = e.Mobile as PlayerMobile;
-            if (pm == null)
-                return;
-            InitializeSortBagsAccountCache(pm);
-            var kind = e.ArgString.ToLower().Trim();
-            bool validBagKind = false;
-            ValidateBagKind(ref kind, ref validBagKind);
-            if (!validBagKind)
-            {
-                pm.SendMessage(MessageHues.RedErrorHue, $"Invalid bag type '{e.ArgString}'. Use 'reagent', 'resource', or 'loot'.");
-            }
-            else if (kind == Text_Clear)
-            {
-                var acct = pm.Account as Account;
-                pm.SendMessage("Cleared sorting bags.");
-                m_sortBagsCache[pm.Serial.Value].ReagentBag = null;
-                m_sortBagsCache[pm.Serial.Value].ResourceBag = null;
-                m_sortBagsCache[pm.Serial.Value].LootBag = null;
-                acct.SetTag(GetSortBagSetKeyString(pm), m_sortBagsCache[pm.Serial.Value].ToSerializeString());
-            }
-            else
-            {
-                pm.Target = new InternalTarget(kind);
-                pm.SendMessage(MessageHues.YellowNoticeHue, $"Target the {kind} bag you want to use for sorting. It must be in your main backpack.");
-            }
-        }
-
-        [Usage("Sort [all]")]
-        [Description("Sorts the items in your backpack into pre-defined Reagent and Resources bags. Recurses through subpacks with [all] option.")]
-        private static void Sort_OnCommand(CommandEventArgs e)
-        {
-            var pm = e.Mobile as PlayerMobile;
-            if (pm == null)
-                return;
-            bool doAll = e.ArgString.ToLower().Trim().StartsWith("a");
-            try
-            {
-                InitializeSortBagsAccountCache(pm);
-                var reagentBag = m_sortBagsCache[pm.Serial.Value].ReagentBag;
-                var resourceBag = m_sortBagsCache[pm.Serial.Value].ResourceBag;
-                if (reagentBag != null || resourceBag != null)
-                {
-                    if (reagentBag is not null && reagentBag.Parent != pm.Backpack)
-                    {
-                        reagentBag = null;
-                        pm.SendMessage(MessageHues.RedErrorHue, "Not sorting reagents.");
-                        pm.SendMessage(MessageHues.RedErrorHue, "Reagent bag must be directly in your main backpack.");
-                    }
-                    if (resourceBag is not null && resourceBag.Parent != pm.Backpack)
-                    {
-                        resourceBag = null;
-                        pm.SendMessage(MessageHues.RedErrorHue, "Not sorting resources.");
-                        pm.SendMessage(MessageHues.RedErrorHue, "Resource bag must be directly in your main backpack.");
-                    }
-                    else
-                    {
-                        bool movedAny = false;
-                        var mainPack = pm.Backpack;
-                        movedAny = CheckContainerMoves(pm, mainPack, reagentBag, resourceBag, movedAny, doAll);
-                        if (movedAny)
-                        {
-                            pm.SendMessage(MessageHues.GreenNoticeHue, "Sorted items into bags.");
-                            pm.PlaySound(0x48);
-                        }
-                        else
-                        {
-                            pm.SendMessage(MessageHues.YellowNoticeHue, "No items to sort.");
-                        }
-                    }
-                }
-                else
-                {
-                    pm.SendMessage(MessageHues.RedErrorHue, "No bags set for sorting. Use [SetBag [reagent|resource] to set the bags.");
-                }
-            }
-            catch (Exception ex)
-            {
-                pm.SendMessage(MessageHues.RedErrorHue, $"Error sorting items: {ex.Message}");
-            }
-        }
-
         private static void TryToMoveItemToBag(PlayerMobile pm, Item item, Container bag)
         {
             if (item == null || bag == null || item.Amount <= 0)
@@ -371,7 +365,7 @@ namespace Server.Commands
         {
             if (bag.Items.Count >= bag.MaxItems)
             {
-                throw new ContainerIsFullException("");
+                throw new ContainerIsFullException();
             }
         }
 
@@ -403,6 +397,35 @@ namespace Server.Commands
             }
         }
 
+        public static void ShowIfContainerIsASortOrLootBag(this Container bag, PlayerMobile pm)
+        {
+            if (bag == null || pm == null || bag.RootParent != pm) return;
+            InitializeSortBagsAccountCache(pm);
+            var lootBag = m_sortBagsCache[pm.Serial.Value].LootBag;
+            var reagentBag = m_sortBagsCache[pm.Serial.Value].ReagentBag;
+            var resourceBag = m_sortBagsCache[pm.Serial.Value].ResourceBag;
+            if (bag == lootBag)
+            {
+                pm.SendMessage(MessageHues.GreenNoticeHue, "This is your loot bag.");
+            }
+            if (bag == reagentBag)
+            {
+                pm.SendMessage(MessageHues.GreenNoticeHue, "This is your reagent bag.");
+            }
+            if (bag == resourceBag)
+            {
+                pm.SendMessage(MessageHues.GreenNoticeHue, "This is your resource bag.");
+            }
+        }
+
+        private static List<WeightedValue<string>> snarfWordsWeighted = new()
+        {
+            new WeightedValue<string>(10, "yoink"),
+            new WeightedValue<string>(2, "snatch"),
+            new WeightedValue<string>(5, "snarf"),
+            new WeightedValue<string>(1, "pluck"),
+            new WeightedValue<string>(1, "tweeze")
+        };
         public class SortBags
         {
             public SortBags(Container reagentBag, Container resourceBag, Container lootBag = null)
@@ -515,9 +538,7 @@ namespace Server.Commands
 
     public class ContainerIsFullException : Exception
     {
-        public ContainerIsFullException(string message) : base(message)
-        {
-        }
+        public ContainerIsFullException() : base("Container is full") { }
     }
 }
 
