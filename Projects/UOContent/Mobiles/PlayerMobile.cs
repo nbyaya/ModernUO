@@ -2276,8 +2276,11 @@ namespace Server.Mobiles
                  pm.DuelPlayer.Eliminated) || base.OnMoveOver(m);
 
         public override bool CheckShove(Mobile shoved) =>
-            IgnoreMobiles || shoved.IgnoreMobiles || TransformationSpellHelper.UnderTransformation(shoved, typeof(WraithFormSpell)) ||
-            base.CheckShove(shoved);
+            IgnoreMobiles ||
+            shoved.IgnoreMobiles ||
+            TransformationSpellHelper.UnderTransformation(shoved, typeof(WraithFormSpell)) ||
+            DoShoveCheck(shoved) /*||
+            base.CheckShove(shoved)*/;
 
         protected override void OnMapChange(Map oldMap)
         {
