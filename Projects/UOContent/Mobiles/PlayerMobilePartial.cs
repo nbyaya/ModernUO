@@ -12,11 +12,11 @@ namespace Server.Mobiles
 
         private bool DoShoveCheck(Mobile shoved)
         {
-            if(this.Map == Map.Felucca)
-            {
-                this.SendMessage(MessageHues.BlueNoticeHue, "Felucca shove!");
-                return true;
-            }
+            //if(this.Map == Map.Felucca)
+            //{
+            //    this.SendMessage(MessageHues.BlueNoticeHue, "Felucca shove!");
+            //    return true;
+            //}
 
             if (!shoved.Alive || !Alive || shoved.IsDeadBondedPet || IsDeadBondedPet)
             {
