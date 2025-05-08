@@ -8,7 +8,7 @@ namespace Server.Mobiles
 {
     public partial class PlayerMobile
     {
-        private const int ShoveStaminaLoss = 10;
+        private const int MaxShoveStaminaLoss = 10;
 
         private bool DoShoveCheck(Mobile shoved)
         {
@@ -46,12 +46,16 @@ namespace Server.Mobiles
                 }
                 else
                 {
-                    if (Stam >= ShoveStaminaLoss)
+                    int actualStaminaLoss =
+                        (this.HitsMax <= shoved.HitsMax) ?
+                        MaxShoveStaminaLoss :
+                        (int)((decimal)MaxShoveStaminaLoss * ((decimal)shoved.HitsMax / (decimal)this.HitsMax));
+                    if (Stam >= actualStaminaLoss)
                     {
                         //number = shoved.Hidden ? 1019043 : 1019042;
-                        Stam -= ShoveStaminaLoss;
+                        Stam -= actualStaminaLoss;
                         int huecolor = MessageHues.BlueNoticeHue;
-                        if (Stam <= ShoveStaminaLoss * 2)
+                        if (Stam <= actualStaminaLoss * 2)
                         {
                             huecolor = MessageHues.RedErrorHue;
                         }
