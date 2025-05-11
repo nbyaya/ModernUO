@@ -206,7 +206,6 @@ namespace Server.Commands
             finally
             {
                 pm.SendMessage(MessageHues.WhiteNoticeHue, "Looting complete.");
-                pm.PlaySound(0x48);
                 pm.LootingProcId = 0;
             }
         }
