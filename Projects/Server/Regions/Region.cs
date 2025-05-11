@@ -197,7 +197,7 @@ public class Region : IComparable<Region>, IValueLinkListNode<Region>
 
     public static TimeSpan StaffLogoutDelay { get; set; } = TimeSpan.Zero;
 
-    public static TimeSpan DefaultLogoutDelay { get; set; } = TimeSpan.FromMinutes(5.0);
+    public static TimeSpan DefaultLogoutDelay { get; set; } = TimeSpan.FromMinutes(1.0);
 
     public string Name { get; }
 
