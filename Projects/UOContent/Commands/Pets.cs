@@ -29,11 +29,11 @@ namespace Server.Commands
                         {
                             if (bc == pm.Mount)
                             {
-                                e.Mobile.SendMessage($"Mount: {bc.Name} - {bc.ControlSlots} slots {pm.X}x{pm.Y}x{pm.Z} {pm.Map.Name}");
+                                e.Mobile.SendMessage($"Mount: {bc.Name} - {bc.ControlSlots} slots {pm.X},{pm.Y},{pm.Z},{pm.Map.Name}");
                             }
                             else
                             {
-                                e.Mobile.SendMessage($"Pet: {bc.Name} - {bc.ControlSlots} slots {bc.X}x{bc.Y}x{bc.Z} {bc.Map.Name}");
+                                e.Mobile.SendMessage($"Pet: {bc.Name} - {bc.ControlSlots} slots {bc.X},{bc.Y},{bc.Z},{bc.Map.Name}");
                             }
                         }
                         catch { }
