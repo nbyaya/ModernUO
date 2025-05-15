@@ -39,7 +39,7 @@ public partial class BaseEscortable : BaseCreature
         "Cove", "Britain", "Jhelom",
         "Minoc", "Ocllo", "Trinsic",
         "Vesper", "Yew", "Skara Brae",
-        "Nujel'm", "Moonglow", "Magincia"
+        "Nujel'm", "Moonglow"/*, "Magincia"*/
     ];
 
     // ML list, pre-ML quest system
@@ -61,7 +61,7 @@ public partial class BaseEscortable : BaseCreature
         { typeof(EscortToNujelm), (Array.Empty<int>(), 0) },
         { typeof(EscortToMoonglow), (Array.Empty<int>(), 0) },
         { typeof(EscortToMinoc), (Array.Empty<int>(), 0) },
-        { typeof(EscortToMagincia), (Array.Empty<int>(), 0) },
+       /* { typeof(EscortToMagincia), (Array.Empty<int>(), 0) },*/
         { typeof(EscortToJhelom), (Array.Empty<int>(), 0) },
         { typeof(EscortToCove), (Array.Empty<int>(), 0) },
         { typeof(EscortToBritain), (Array.Empty<int>(), 0) }
