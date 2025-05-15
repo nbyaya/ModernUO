@@ -92,10 +92,10 @@ public partial class Moongate : Item
         {
             m.SendLocalizedMessage(1061632); // You can't do that while carrying the sigil.
         }
-        else if (TargetMap == Map.Felucca && m is PlayerMobile mobile && mobile.Young)
-        {
-            mobile.SendLocalizedMessage(1049543); // You decide against traveling to Felucca while you are still young.
-        }
+        //else if (TargetMap == Map.Felucca && m is PlayerMobile mobile && mobile.Young)
+        //{
+        //    mobile.SendLocalizedMessage(1049543); // You decide against traveling to Felucca while you are still young.
+        //}
         else if (m.Kills >= 5 && TargetMap != Map.Felucca ||
                  TargetMap == Map.Tokuno && (flags & ClientFlags.Tokuno) == 0 ||
                  TargetMap == Map.Malas && (flags & ClientFlags.Malas) == 0 ||

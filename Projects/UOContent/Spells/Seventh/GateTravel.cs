@@ -173,7 +173,7 @@ public partial class GateTravelMoongate : Moongate
     [CommandProperty(AccessLevel.GameMaster)]
     public Moongate LinkedGate { get; set; }
 
-    public override bool ShowFeluccaWarning => Core.AOS;
+    public override bool ShowFeluccaWarning => false; /*Core.AOS;*/
 
     public override void UseGate(Mobile m)
     {
