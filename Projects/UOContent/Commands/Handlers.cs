@@ -25,7 +25,7 @@ namespace Server.Commands
             Register("Go", AccessLevel.Counselor, Go_OnCommand);
             Register("DropHolding", AccessLevel.Counselor, DropHolding_OnCommand);
             Register("GetFollowers", AccessLevel.GameMaster, GetFollowers_OnCommand);
-            Register("Where", AccessLevel.Counselor, Where_OnCommand);
+            Register("Where", AccessLevel.Player, Where_OnCommand);
             Register("AutoPageNotify", AccessLevel.Counselor, APN_OnCommand);
             Register("Animate", AccessLevel.GameMaster, Animate_OnCommand);
             Register("Cast", AccessLevel.Counselor, Cast_OnCommand);
