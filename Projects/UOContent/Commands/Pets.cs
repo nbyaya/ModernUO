@@ -27,19 +27,48 @@ namespace Server.Commands
                     {
                         try
                         {
-                            if (bc == pm.Mount)
-                            {
-                                e.Mobile.SendMessage($"Mount: {bc.Name} - {bc.ControlSlots} slots {pm.X},{pm.Y},{pm.Z},{pm.Map.Name}");
-                            }
-                            else
-                            {
-                                e.Mobile.SendMessage($"Pet: {bc.Name} - {bc.ControlSlots} slots {bc.X},{bc.Y},{bc.Z},{bc.Map.Name}");
-                            }
+                            e.Mobile.SendMessage($"Follower: {bc.Name} - {GetDistanceAndCompassDirectionToPet(pm, bc)}");
                         }
                         catch { }
                     }
                 }
             //e.Mobile.SendGump(new PetsGump(e.Mobile));
+        }
+
+        private static string GetDistanceAndCompassDirectionToPet(PlayerMobile pm, BaseCreature pet)
+        {
+            if (pet == null) return string.Empty;
+            if (pet == pm.Mount)
+            {
+                return "(mounted)";
+            }
+            else if (pm.Map == pet.Map)
+            {
+                var distance = (int)(pm.GetDistanceToSqrt(pet));
+                var direction = pm.GetDirectionTo(pet);
+                var dirString = direction.ToString();
+                if (direction == Direction.Up)
+                {
+                    dirString = "Northwest";
+                }
+                else if (direction == Direction.Right)
+                {
+                    dirString = "Northeast";
+                }
+                else if (direction == Direction.Left)
+                {
+                    dirString = "Southwest";
+                }
+                else if (direction == Direction.Down)
+                {
+                    dirString = "Southeast";
+                }
+                return $"{distance} tiles, {dirString} ({pet.Region.Name})";
+            }
+            else
+            {
+                return $"in {pet.Map.Name}";
+            }
         }
     }
 
