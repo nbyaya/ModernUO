@@ -27,7 +27,7 @@ namespace Server.Commands
                     {
                         try
                         {
-                            e.Mobile.SendMessage($"Follower: {bc.Name} - {GetDistanceAndCompassDirectionToPet(pm, bc)}");
+                            e.Mobile.SendMessage($"Follower: {bc.Name} (slots: {bc.ControlSlots}) - {GetDistanceAndCompassDirectionToPet(pm, bc)}");
                         }
                         catch { }
                     }
