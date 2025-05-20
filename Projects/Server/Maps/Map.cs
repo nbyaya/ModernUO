@@ -578,6 +578,18 @@ public sealed partial class Map : IComparable<Map>, ISpanFormattable, ISpanParsa
         {
             GetSector(p).OnEnter(m);
         }
+        if(this == Trammel && m.NetState is not null)
+        {
+            if(m.AccessLevel == AccessLevel.Player)
+            {
+                m.SendMessage("Moving character from Trammel to Felucca. Trammel is not supported here.");
+                m.MoveToWorld(new Point3D(m.X, m.Y, m.Z), Map.Felucca);
+            }
+            else
+            {
+                m.SendMessage("You have entered Trammel. You shouldn't be here, but since you're a GM, we'll let it pass.");
+            }
+        }
     }
 
     internal void OnEnter(Item item)
