@@ -226,7 +226,8 @@ namespace Server.Commands
                     && item.Movable
                     && !item.IsLockedDown
                     && !item.IsSecure
-                    && !item.Deleted;
+                    && !item.Deleted
+                    && WithinRange(pm, item);
             }
             else
             {
@@ -238,8 +239,14 @@ namespace Server.Commands
                     && item.Movable
                     && !item.IsLockedDown
                     && !item.IsSecure
-                    && !item.Deleted;
+                    && !item.Deleted
+                    && WithinRange(pm, corpse);
             }
+        }
+
+        private static bool WithinRange(PlayerMobile pm, Item item)
+        {
+            return pm.GetDistanceToSqrt(item) <= 2;
         }
 
         private static bool CheckContainerMoves(PlayerMobile pm, Container containerToSearch, Container reagentBag, Container resourceBag, bool movedAny, bool doAll)
