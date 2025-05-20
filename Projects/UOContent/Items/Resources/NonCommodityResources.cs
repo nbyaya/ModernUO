@@ -26,7 +26,9 @@ namespace Server.Items
         {
             typeof(Arrow),
             typeof(Bolt),
-            typeof(BaseReagent)
+            typeof(BaseReagent),
+            typeof(SpellScroll),
+            typeof(BasePotion)
         };
 
         public static bool IsNonCommodityResource(Item item)

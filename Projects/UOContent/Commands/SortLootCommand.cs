@@ -426,11 +426,13 @@ namespace Server.Commands
 
         private static List<WeightedValue<string>> snarfWordsWeighted = new()
         {
-            new WeightedValue<string>(10, "yoink"),
-            new WeightedValue<string>(2, "snatch"),
-            new WeightedValue<string>(5, "snarf"),
-            new WeightedValue<string>(1, "pluck"),
-            new WeightedValue<string>(1, "tweeze")
+            new WeightedValue<string>(30, "yoink"),
+            new WeightedValue<string>(9, "snarf"),
+            new WeightedValue<string>(6, "snatch"),
+            new WeightedValue<string>(5, "pluck"),
+            new WeightedValue<string>(4, "tweeze"),
+            new WeightedValue<string>(3, "grab"),
+            new WeightedValue<string>(1, "MINE!"),
         };
         public class SortBags
         {
