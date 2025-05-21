@@ -62,7 +62,7 @@ namespace Server.Mobiles
             var vetern = from.Skills.Veterinary.Value;
             var sklsum = taming + anlore + vetern;
 
-            int max = 3;
+            int max = 2;
 
             if (sklsum >= 240.0)
             {
@@ -92,7 +92,7 @@ namespace Server.Mobiles
                 max += (int)((vetern - 90.0) / 10);
             }
 
-            return max;
+            return max * 2;
         }
 
         private static void CloseClaimList(Mobile from)
@@ -282,7 +282,8 @@ namespace Server.Mobiles
             var claimed = false;
             var stabled = 0;
 
-            var claimByName = petName != null;
+            var claimByName = true;
+            petName ??= "";
 
             if (pm.Stabled?.Count > 0)
             {
