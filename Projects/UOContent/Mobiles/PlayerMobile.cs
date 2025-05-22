@@ -1262,7 +1262,7 @@ namespace Server.Mobiles
                 from.SendGump(new ServerLockdownNoticeGump(notice));
                 return;
             }
-
+            from.FollowersMax = 7;
             VirtueSystem.CheckAtrophies(from);
             from.ClaimAutoStabledPets();
             AnimalForm.GetContext(from)?.Timer.Start();
